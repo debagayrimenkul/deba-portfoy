@@ -164,66 +164,101 @@ def portfolios(tt):
     if tt not in ('Satılık', 'Kiralık'):
         return redirect(url_for('index'))
 
+    u = current_user()
+
     q = """
         SELECT p.*, u.name advisor
         FROM portfolios p
-        JOIN users u ON u.id=p.advisor_id
+        JOIN users u ON u.id = p.advisor_id
         WHERE p.status='active'
         AND p.transaction_type=?
     """
-
     args = [tt]
 
-    filters = [
-        'property_type',
-        'project_name',
-        'rooms',
-        'usage_status'
-    ]
+    # Standart filtreler
+    filters = ['property_type', 'project_name', 'rooms', 'usage_status']
 
     for f in filters:
         v = request.args.get(f, '').strip()
-
         if v:
-            q += f' AND p.{f}=?'
+            q += f" AND p.{f}=?"
             args.append(v)
 
-    if request.args.get('min_price'):
-        q += ' AND price>=?'
-        args.append(float(request.args['min_price']))
+    # Konum filtreleri
+    province = request.args.get('province', '').strip()
+    district = request.args.get('district', '').strip()
+    neighborhood = request.args.get('neighborhood', '').strip()
 
-    if request.args.get('max_price'):
-        q += ' AND price<=?'
-        args.append(float(request.args['max_price']))
+    if province:
+        q += " AND LOWER(p.province) LIKE LOWER(?)"
+        args.append('%' + province + '%')
 
-    q += ' ORDER BY updated_at DESC'
+    if district:
+        q += " AND LOWER(p.district) LIKE LOWER(?)"
+        args.append('%' + district + '%')
+
+    if neighborhood:
+        q += " AND LOWER(p.neighborhood) LIKE LOWER(?)"
+        args.append('%' + neighborhood + '%')
+
+    # m² filtreleri
+    min_sqm = request.args.get('min_sqm', '').strip()
+    max_sqm = request.args.get('max_sqm', '').strip()
+
+    if min_sqm:
+        q += " AND p.sqm>=?"
+        args.append(float(min_sqm))
+
+    if max_sqm:
+        q += " AND p.sqm<=?"
+        args.append(float(max_sqm))
+
+    # Fiyat filtreleri
+    min_price = request.args.get('min_price', '').strip()
+    max_price = request.args.get('max_price', '').strip()
+
+    if min_price:
+        q += " AND p.price>=?"
+        args.append(float(min_price))
+
+    if max_price:
+        q += " AND p.price<=?"
+        args.append(float(max_price))
+
+    # Sadece admin: portföy sahibi veya telefonla arama
+    owner_search = request.args.get('owner_search', '').strip()
+
+    if u['role'] == 'admin' and owner_search:
+        q += " AND (LOWER(p.owner_name) LIKE LOWER(?) OR p.owner_phone LIKE ?)"
+        args.extend([
+            '%' + owner_search + '%',
+            '%' + owner_search + '%'
+        ])
+
+    q += " ORDER BY p.updated_at DESC"
 
     c = db()
-
     rows = c.execute(q, args).fetchall()
 
     projects = [
-        x[0]
-        for x in c.execute(
-            "SELECT DISTINCT project_name "
-            "FROM portfolios "
-            "WHERE project_name IS NOT NULL "
-            "AND project_name<>'' "
-            "ORDER BY project_name"
-        )
+        x[0] for x in c.execute("""
+            SELECT DISTINCT project_name
+            FROM portfolios
+            WHERE project_name IS NOT NULL
+            AND project_name<>''
+            ORDER BY project_name
+        """)
     ]
 
     c.close()
 
     return render_template(
         'portfolios.html',
-        u=current_user(),
+        u=u,
         rows=rows,
         tt=tt,
         projects=projects
     )
-
-
 @app.route('/portfolio/new/<tt>', methods=['GET', 'POST'])
 @login_required
 def new_portfolio(tt):
