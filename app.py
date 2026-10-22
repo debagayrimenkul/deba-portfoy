@@ -15,31 +15,6 @@ def db():
     return c
 
 
-def add_missing_columns(c):
-    """
-    Mevcut veritabanını silmeden yeni alanları ekler.
-    """
-    existing = {
-        row['name']
-        for row in c.execute("PRAGMA table_info(portfolios)").fetchall()
-    }
-
-    new_columns = {
-        'gross_sqm': 'REAL',
-        'net_sqm': 'REAL',
-        'building_floors': 'INTEGER',
-        'building_age': 'INTEGER',
-        'owner_name': 'TEXT',
-        'owner_phone': 'TEXT'
-    }
-
-    for column, column_type in new_columns.items():
-        if column not in existing:
-            c.execute(
-                f'ALTER TABLE portfolios ADD COLUMN {column} {column_type}'
-            )
-
-
 def init_db():
     c = db()
 
@@ -73,25 +48,26 @@ def init_db():
         parcel_no TEXT,
         advisor_id INTEGER NOT NULL,
         description TEXT,
+        owner_name TEXT,
+        owner_phone TEXT,
         status TEXT NOT NULL DEFAULT 'active',
         removal_reason TEXT,
         removed_at TEXT,
         removed_by INTEGER,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
-
-        gross_sqm REAL,
-        net_sqm REAL,
-        building_floors INTEGER,
-        building_age INTEGER,
-        owner_name TEXT,
-        owner_phone TEXT,
-
         FOREIGN KEY(advisor_id) REFERENCES users(id)
     );
     ''')
 
-    add_missing_columns(c)
+    # Mevcut veritabanına yeni alanları güvenli şekilde ekle
+    columns = [row['name'] for row in c.execute("PRAGMA table_info(portfolios)").fetchall()]
+
+    if 'owner_name' not in columns:
+        c.execute("ALTER TABLE portfolios ADD COLUMN owner_name TEXT")
+
+    if 'owner_phone' not in columns:
+        c.execute("ALTER TABLE portfolios ADD COLUMN owner_phone TEXT")
 
     if not c.execute('SELECT 1 FROM users LIMIT 1').fetchone():
         c.execute(
@@ -143,10 +119,7 @@ def login():
         ).fetchone()
         c.close()
 
-        if u and check_password_hash(
-            u['password'],
-            request.form['password']
-        ):
+        if u and check_password_hash(u['password'], request.form['password']):
             session['uid'] = u['id']
             return redirect(url_for('index'))
 
@@ -169,12 +142,10 @@ def index():
     counts = {
         r['transaction_type']: r['n']
         for r in c.execute(
-            """
-            SELECT transaction_type, count(*) n
-            FROM portfolios
-            WHERE status='active'
-            GROUP BY transaction_type
-            """
+            "SELECT transaction_type,count(*) n "
+            "FROM portfolios "
+            "WHERE status='active' "
+            "GROUP BY transaction_type"
         )
     }
 
@@ -234,13 +205,11 @@ def portfolios(tt):
     projects = [
         x[0]
         for x in c.execute(
-            """
-            SELECT DISTINCT project_name
-            FROM portfolios
-            WHERE project_name IS NOT NULL
-            AND project_name<>''
-            ORDER BY project_name
-            """
+            "SELECT DISTINCT project_name "
+            "FROM portfolios "
+            "WHERE project_name IS NOT NULL "
+            "AND project_name<>'' "
+            "ORDER BY project_name"
         )
     ]
 
@@ -258,9 +227,6 @@ def portfolios(tt):
 @app.route('/portfolio/new/<tt>', methods=['GET', 'POST'])
 @login_required
 def new_portfolio(tt):
-    if tt not in ('Satılık', 'Kiralık'):
-        return redirect(url_for('index'))
-
     u = current_user()
 
     if request.method == 'POST':
@@ -284,77 +250,55 @@ def save_portfolio(pid, tt, u):
         else u['id']
     )
 
-    property_type = f.get('property_type', '').strip()
-
-    # Eski sqm alanıyla uyumluluğu koruyoruz.
-    gross_sqm = f.get('gross_sqm') or f.get('sqm') or None
-    net_sqm = f.get('net_sqm') or None
-
-    # Arsa için de mevcut sqm yapısının çalışmasını sağlar.
-    sqm = gross_sqm or net_sqm
-
-    if not sqm:
-        flash('m² bilgisi gereklidir.')
-        return redirect(request.url)
-
-    price = f.get('price')
-
-    if not price:
-        flash('Fiyat bilgisi gereklidir.')
-        return redirect(request.url)
-
-    # Malik bilgileri yalnızca admin tarafından yazılabilir/değiştirilebilir.
+    # Bu iki özel bilgi yalnızca admin tarafından girilebilir/değiştirilebilir
     if u['role'] == 'admin':
-        owner_name = f.get('owner_name', '').strip() or None
-        owner_phone = f.get('owner_phone', '').strip() or None
+        owner_name = f.get('owner_name', '').strip()
+        owner_phone = f.get('owner_phone', '').strip()
     else:
-        if pid:
-            c = db()
-            old = c.execute(
-                'SELECT owner_name, owner_phone FROM portfolios WHERE id=?',
-                (pid,)
-            ).fetchone()
-            c.close()
-
-            owner_name = old['owner_name'] if old else None
-            owner_phone = old['owner_phone'] if old else None
-        else:
-            owner_name = None
-            owner_phone = None
-
-    vals = [
-        tt,
-        property_type,
-        f.get('project_name', '').strip() or None,
-        f.get('block', '').strip() or None,
-        f.get('apartment_no') or None,
-        f.get('rooms') or None,
-        f.get('floor') or None,
-        float(sqm),
-        f.get('facade') or None,
-        float(price),
-        f.get('usage_status') or None,
-        f.get('province', '').strip() or None,
-        f.get('district', '').strip() or None,
-        f.get('neighborhood', '').strip() or None,
-        f.get('island_no', '').strip() or None,
-        f.get('parcel_no', '').strip() or None,
-        advisor,
-        f.get('description', '').strip() or None,
-        float(gross_sqm) if gross_sqm else None,
-        float(net_sqm) if net_sqm else None,
-        int(f.get('building_floors')) if f.get('building_floors') else None,
-        int(f.get('building_age')) if f.get('building_age') else None,
-        owner_name,
-        owner_phone,
-        now
-    ]
+        owner_name = None
+        owner_phone = None
 
     c = db()
 
     if pid:
-        c.execute(
-            '''
+        # Admin olmayan kullanıcı düzenleme yaparken
+        # mevcut sahip/telefon bilgilerini değiştiremesin.
+        if u['role'] != 'admin':
+            old = c.execute(
+                'SELECT owner_name, owner_phone FROM portfolios WHERE id=?',
+                (pid,)
+            ).fetchone()
+
+            if old:
+                owner_name = old['owner_name']
+                owner_phone = old['owner_phone']
+
+        vals = [
+            tt,
+            f['property_type'],
+            f.get('project_name'),
+            f.get('block'),
+            f.get('apartment_no') or None,
+            f.get('rooms'),
+            f.get('floor') or None,
+            f['sqm'],
+            f.get('facade'),
+            f['price'],
+            f.get('usage_status'),
+            f.get('province'),
+            f.get('district'),
+            f.get('neighborhood'),
+            f.get('island_no'),
+            f.get('parcel_no'),
+            advisor,
+            f.get('description'),
+            owner_name,
+            owner_phone,
+            now,
+            pid
+        ]
+
+        c.execute('''
             UPDATE portfolios SET
                 transaction_type=?,
                 property_type=?,
@@ -374,21 +318,39 @@ def save_portfolio(pid, tt, u):
                 parcel_no=?,
                 advisor_id=?,
                 description=?,
-                gross_sqm=?,
-                net_sqm=?,
-                building_floors=?,
-                building_age=?,
                 owner_name=?,
                 owner_phone=?,
                 updated_at=?
             WHERE id=?
-            ''',
-            vals + [pid]
-        )
+        ''', vals)
 
     else:
-        c.execute(
-            '''
+        vals = [
+            tt,
+            f['property_type'],
+            f.get('project_name'),
+            f.get('block'),
+            f.get('apartment_no') or None,
+            f.get('rooms'),
+            f.get('floor') or None,
+            f['sqm'],
+            f.get('facade'),
+            f['price'],
+            f.get('usage_status'),
+            f.get('province'),
+            f.get('district'),
+            f.get('neighborhood'),
+            f.get('island_no'),
+            f.get('parcel_no'),
+            advisor,
+            f.get('description'),
+            owner_name,
+            owner_phone,
+            now,
+            now
+        ]
+
+        c.execute('''
             INSERT INTO portfolios(
                 transaction_type,
                 property_type,
@@ -408,23 +370,16 @@ def save_portfolio(pid, tt, u):
                 parcel_no,
                 advisor_id,
                 description,
-                gross_sqm,
-                net_sqm,
-                building_floors,
-                building_age,
                 owner_name,
                 owner_phone,
                 created_at,
                 updated_at
             )
             VALUES(
-                ?,?,?,?,?,?,?,?,?,?,
-                ?,?,?,?,?,?,?,?,?,?,
-                ?,?,?,?,?,?
+                ?,?,?,?,?,?,?,?,?,?,?,
+                ?,?,?,?,?,?,?,?,?,?,?
             )
-            ''',
-            vals[:-1] + [now, now]
-        )
+        ''', vals)
 
     c.commit()
     c.close()
@@ -560,19 +515,12 @@ def users():
         try:
             c.execute(
                 '''
-                INSERT INTO users(
-                    username,
-                    password,
-                    name,
-                    role
-                )
+                INSERT INTO users(username,password,name,role)
                 VALUES(?,?,?,?)
                 ''',
                 (
                     request.form['username'],
-                    generate_password_hash(
-                        request.form['password']
-                    ),
+                    generate_password_hash(request.form['password']),
                     request.form['name'],
                     request.form['role']
                 )
@@ -602,12 +550,8 @@ def helpers():
         c = db()
 
         x = c.execute(
-            '''
-            SELECT id, name
-            FROM users
-            WHERE active=1
-            ORDER BY name
-            '''
+            'SELECT id,name FROM users '
+            'WHERE active=1 ORDER BY name'
         ).fetchall()
 
         c.close()
