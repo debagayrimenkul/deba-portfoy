@@ -578,7 +578,78 @@ def users():
         rows=rows
     )
 
+@app.route('/admin/user/<int:uid>/toggle', methods=['POST'])
+@login_required
+def toggle_user(uid):
+    u = current_user()
 
+    if u['role'] != 'admin':
+        return redirect(url_for('index'))
+
+    c = db()
+    target = c.execute(
+        'SELECT * FROM users WHERE id=?',
+        (uid,)
+    ).fetchone()
+
+    if not target:
+        c.close()
+        return redirect(url_for('users'))
+
+    # Ana admin hesabı pasif yapılamaz
+    if target['username'] == 'admin':
+        c.close()
+        flash('Ana admin hesabı pasif yapılamaz.')
+        return redirect(url_for('users'))
+
+    new_status = 0 if target['active'] else 1
+
+    c.execute(
+        'UPDATE users SET active=? WHERE id=?',
+        (new_status, uid)
+    )
+
+    c.commit()
+    c.close()
+
+    flash('Kullanıcı durumu güncellendi.')
+    return redirect(url_for('users'))
+
+
+@app.route('/admin/user/<int:uid>/password', methods=['POST'])
+@login_required
+def reset_password(uid):
+    u = current_user()
+
+    if u['role'] != 'admin':
+        return redirect(url_for('index'))
+
+    new_password = request.form.get('new_password', '').strip()
+
+    if len(new_password) < 6:
+        flash('Yeni şifre en az 6 karakter olmalıdır.')
+        return redirect(url_for('users'))
+
+    c = db()
+    target = c.execute(
+        'SELECT * FROM users WHERE id=?',
+        (uid,)
+    ).fetchone()
+
+    if not target:
+        c.close()
+        return redirect(url_for('users'))
+
+    c.execute(
+        'UPDATE users SET password=? WHERE id=?',
+        (generate_password_hash(new_password), uid)
+    )
+
+    c.commit()
+    c.close()
+
+    flash('Kullanıcının şifresi değiştirildi.')
+    return redirect(url_for('users'))
 @app.context_processor
 def helpers():
     def advisors():
