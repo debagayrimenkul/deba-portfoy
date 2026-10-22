@@ -5,93 +5,98 @@
 
 <form method="post" class="form" id="pf">
 
-<label>
-    Tipi
-    <select name="property_type" id="ptype" required>
-        {% for x in ['Daire','Villa','İş Yeri','Arsa'] %}
-        <option {% if p and p.property_type==x %}selected{% endif %}>{{x}}</option>
-        {% endfor %}
-    </select>
-</label>
-
-<div class="normal">
-
+    <!-- TİP -->
     <label>
-        Proje Adı
+        Tipi
+        <select name="property_type" id="ptype" required>
+            {% for x in ['Daire','Villa','İş Yeri','Arsa'] %}
+            <option value="{{x}}" {% if p and p.property_type==x %}selected{% endif %}>
+                {{x}}
+            </option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <!-- PROJE -->
+    <label class="project-field">
+        <span id="project-label">Proje Adı</span>
         <input name="project_name"
                value="{{p.project_name if p else ''}}">
     </label>
 
-    <label>
+    <!-- BLOK - SADECE DAİRE -->
+    <label class="apartment-field">
         Blok
         <input name="block"
                value="{{p.block if p else ''}}">
     </label>
 
-    <label>
+    <!-- DAİRE NO - SADECE DAİRE -->
+    <label class="apartment-field">
         Daire No
         <select name="apartment_no">
             <option value="">-</option>
             {% for x in range(1,201) %}
-            <option {% if p and p.apartment_no==x %}selected{% endif %}>
+            <option value="{{x}}" {% if p and p.apartment_no==x %}selected{% endif %}>
                 {{x}}
             </option>
             {% endfor %}
         </select>
     </label>
 
-    <label>
+    <!-- ODA SAYISI - DAİRE/VİLLA -->
+    <label class="room-field">
         Oda Sayısı
         <select name="rooms">
             <option value="">-</option>
             {% for x in ['1+0','1+1','1,5+1','2+1','2,5+1','3+1','4+1','5+1','5+2','6+1','6+2'] %}
-            <option {% if p and p.rooms==x %}selected{% endif %}>
+            <option value="{{x}}" {% if p and p.rooms==x %}selected{% endif %}>
                 {{x}}
             </option>
             {% endfor %}
         </select>
     </label>
 
-    <label>
+    <!-- KAT - DAİRE/VİLLA/İŞ YERİ -->
+    <label class="floor-field">
         Bulunduğu Kat
         <select name="floor">
             <option value="">-</option>
             {% for x in range(0,31) %}
-            <option {% if p and p.floor==x %}selected{% endif %}>
+            <option value="{{x}}" {% if p and p.floor==x %}selected{% endif %}>
                 {{x}}
             </option>
             {% endfor %}
         </select>
     </label>
 
-    <label>
+    <!-- CEPHE - DAİRE/VİLLA -->
+    <label class="facade-field">
         Cephe
         <select name="facade">
             <option value="">-</option>
             {% for x in ['Kuzey','Güney','Doğu','Batı','Kuzey-Doğu','Kuzey-Batı','Güney-Doğu','Güney-Batı'] %}
-            <option {% if p and p.facade==x %}selected{% endif %}>
+            <option value="{{x}}" {% if p and p.facade==x %}selected{% endif %}>
                 {{x}}
             </option>
             {% endfor %}
         </select>
     </label>
 
-    <label>
+    <!-- KULLANIM DURUMU -->
+    <label class="usage-field">
         Kullanım Durumu
         <select name="usage_status">
             <option value="">-</option>
             {% for x in ['Boş','Kiracılı','Mal sahibi oturuyor'] %}
-            <option {% if p and p.usage_status==x %}selected{% endif %}>
+            <option value="{{x}}" {% if p and p.usage_status==x %}selected{% endif %}>
                 {{x}}
             </option>
             {% endfor %}
         </select>
     </label>
 
-</div>
-
-<div class="location">
-
+    <!-- ADRES: TÜM TİPLER -->
     <label>
         İl
         <input name="province"
@@ -110,102 +115,171 @@
                value="{{p.neighborhood if p else ''}}">
     </label>
 
-</div>
-
-<div class="land">
-
-    <label>
+    <!-- ADA/PARSEL: SADECE ARSA -->
+    <label class="land-field">
         Ada No
         <input name="island_no"
                value="{{p.island_no if p else ''}}">
     </label>
 
-    <label>
+    <label class="land-field">
         Parsel No
         <input name="parcel_no"
                value="{{p.parcel_no if p else ''}}">
     </label>
 
-</div>
+    <!-- M2 -->
+    <label>
+        m²
+        <input name="sqm"
+               type="number"
+               step="0.01"
+               value="{{p.sqm if p else ''}}"
+               required>
+    </label>
 
-<label>
-    m²
-    <input name="sqm"
-           type="number"
-           step="0.01"
-           value="{{p.sqm if p else ''}}"
-           required>
-</label>
+    <!-- FİYAT -->
+    <label>
+        Fiyat (TL)
+        <input name="price"
+               type="number"
+               step="0.01"
+               value="{{p.price if p else ''}}"
+               required>
+    </label>
 
-<label>
-    Fiyat (TL)
-    <input name="price"
-           type="number"
-           step="0.01"
-           value="{{p.price if p else ''}}"
-           required>
-</label>
+    <!-- ADMIN ALANLARI -->
+    {% if u.role=='admin' %}
 
-{% if u.role=='admin' %}
+    <label>
+        Danışman
+        <select name="advisor_id">
+            {% for a in advisors() %}
+            <option value="{{a.id}}"
+                {% if p and p.advisor_id==a.id %}selected{% endif %}>
+                {{a.name}}
+            </option>
+            {% endfor %}
+        </select>
+    </label>
 
-<label>
-    Danışman
-    <select name="advisor_id">
-        {% for a in advisors() %}
-        <option value="{{a.id}}"
-        {% if p and p.advisor_id==a.id %}selected{% endif %}>
-            {{a.name}}
-        </option>
-        {% endfor %}
-    </select>
-</label>
+    <label>
+        Portföy Sahibi
+        <input name="owner_name"
+               value="{{p.owner_name if p else ''}}">
+    </label>
 
-<label>
-    Portföy Sahibi
-    <input name="owner_name"
-           value="{{p.owner_name if p and p.owner_name else ''}}">
-</label>
+    <label>
+        Telefon
+        <input name="owner_phone"
+               type="tel"
+               value="{{p.owner_phone if p else ''}}">
+    </label>
 
-<label>
-    Telefon
-    <input name="owner_phone"
-           type="tel"
-           value="{{p.owner_phone if p and p.owner_phone else ''}}">
-</label>
+    {% endif %}
 
-{% endif %}
+    <!-- AÇIKLAMA -->
+    <label class="wide">
+        Açıklama
+        <textarea name="description"
+                  rows="5">{{p.description if p else ''}}</textarea>
+    </label>
 
-<label class="wide">
-    Açıklama
-    <textarea name="description"
-              rows="5">{{p.description if p else ''}}</textarea>
-</label>
-
-<button class="wide">Kaydet</button>
+    <button class="wide">Kaydet</button>
 
 </form>
 
 <script>
+function updateForm() {
 
-function sw(){
+    const type = document.getElementById('ptype').value;
 
-    let type=document.getElementById('ptype').value;
+    const apartmentFields =
+        document.querySelectorAll('.apartment-field');
 
-    let arsa = type==='Arsa';
+    const roomFields =
+        document.querySelectorAll('.room-field');
 
-    document.querySelectorAll('.land').forEach(
-        x=>x.style.display='contents'
-    );
+    const floorFields =
+        document.querySelectorAll('.floor-field');
 
-    document.querySelectorAll('.normal').forEach(
-        x=>x.style.display=arsa?'none':'contents'
-    );
+    const facadeFields =
+        document.querySelectorAll('.facade-field');
+
+    const usageFields =
+        document.querySelectorAll('.usage-field');
+
+    const projectFields =
+        document.querySelectorAll('.project-field');
+
+    const landFields =
+        document.querySelectorAll('.land-field');
+
+    function show(fields, visible) {
+        fields.forEach(function(el) {
+            el.style.display = visible ? '' : 'none';
+        });
+    }
+
+    /* Önce hepsini aç */
+    show(projectFields, true);
+    show(apartmentFields, true);
+    show(roomFields, true);
+    show(floorFields, true);
+    show(facadeFields, true);
+    show(usageFields, true);
+    show(landFields, false);
+
+    document.getElementById('project-label').innerText = 'Proje Adı';
+
+    if (type === 'Daire') {
+
+        show(apartmentFields, true);
+        show(roomFields, true);
+        show(floorFields, true);
+        show(facadeFields, true);
+        show(usageFields, true);
+
+    }
+
+    else if (type === 'Villa') {
+
+        show(apartmentFields, false);
+        show(roomFields, true);
+        show(floorFields, true);
+        show(facadeFields, true);
+        show(usageFields, true);
+
+    }
+
+    else if (type === 'İş Yeri') {
+
+        show(apartmentFields, false);
+        show(roomFields, false);
+        show(floorFields, true);
+        show(facadeFields, false);
+        show(usageFields, true);
+
+        document.getElementById('project-label').innerText =
+            'Proje / İş Merkezi';
+
+    }
+
+    else if (type === 'Arsa') {
+
+        show(projectFields, false);
+        show(apartmentFields, false);
+        show(roomFields, false);
+        show(floorFields, false);
+        show(facadeFields, false);
+        show(usageFields, false);
+        show(landFields, true);
+
+    }
 }
 
-document.getElementById('ptype').onchange=sw;
-
-sw();
-
+document.getElementById('ptype').addEventListener('change', updateForm);
+updateForm();
 </script>
 
 {% endblock %}
