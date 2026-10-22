@@ -278,7 +278,9 @@ def new_portfolio(tt):
 def save_portfolio(pid, tt, u):
     f = request.form
     now = datetime.now().strftime('%Y-%m-%d %H:%M')
-
+    # Admin tarafından girilen portföy doğrudan yayınlanır.
+    # Danışman tarafından girilen veya düzenlenen portföy admin onayına gider.
+    new_status = 'active' if u['role'] == 'admin' else 'pending'
     advisor = (
         int(f.get('advisor_id') or u['id'])
         if u['role'] == 'admin'
@@ -329,6 +331,7 @@ def save_portfolio(pid, tt, u):
             f.get('description'),
             owner_name,
             owner_phone,
+            new_status,
             now,
             pid
         ]
@@ -355,6 +358,7 @@ def save_portfolio(pid, tt, u):
                 description=?,
                 owner_name=?,
                 owner_phone=?,
+                status=?,
                 updated_at=?
             WHERE id=?
         ''', vals)
@@ -381,6 +385,7 @@ def save_portfolio(pid, tt, u):
             f.get('description'),
             owner_name,
             owner_phone,
+            new_status,
             now,
             now
         ]
@@ -407,12 +412,13 @@ def save_portfolio(pid, tt, u):
                 description,
                 owner_name,
                 owner_phone,
+                status,               
                 created_at,
                 updated_at
             )
             VALUES(
                 ?,?,?,?,?,?,?,?,?,?,?,
-                ?,?,?,?,?,?,?,?,?,?,?
+                ?,?,?,?,?,?,?,?,?,?,?,?
             )
         ''', vals)
 
@@ -535,7 +541,85 @@ def archive_list():
         rows=rows
     )
 
+@app.route('/admin/pending')
+@login_required
+def pending_portfolios():
+    u = current_user()
 
+    if u['role'] != 'admin':
+        return redirect(url_for('index'))
+
+    c = db()
+
+    rows = c.execute("""
+        SELECT p.*, u.name advisor
+        FROM portfolios p
+        JOIN users u ON u.id = p.advisor_id
+        WHERE p.status='pending'
+        ORDER BY p.updated_at DESC
+    """).fetchall()
+
+    c.close()
+
+    return render_template(
+        'pending.html',
+        u=u,
+        rows=rows
+    )
+
+
+@app.route('/admin/portfolio/<int:pid>/approve', methods=['POST'])
+@login_required
+def approve_portfolio(pid):
+    u = current_user()
+
+    if u['role'] != 'admin':
+        return redirect(url_for('index'))
+
+    c = db()
+
+    now = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+    c.execute("""
+        UPDATE portfolios
+        SET status='active',
+            updated_at=?
+        WHERE id=? AND status='pending'
+    """, (now, pid))
+
+    c.commit()
+    c.close()
+
+    flash('Portföy onaylandı ve yayına alındı.')
+
+    return redirect(url_for('pending_portfolios'))
+
+
+@app.route('/admin/portfolio/<int:pid>/reject', methods=['POST'])
+@login_required
+def reject_portfolio(pid):
+    u = current_user()
+
+    if u['role'] != 'admin':
+        return redirect(url_for('index'))
+
+    c = db()
+
+    now = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+    c.execute("""
+        UPDATE portfolios
+        SET status='rejected',
+            updated_at=?
+        WHERE id=? AND status='pending'
+    """, (now, pid))
+
+    c.commit()
+    c.close()
+
+    flash('Portföy reddedildi.')
+
+    return redirect(url_for('pending_portfolios'))
 @app.route('/admin/users', methods=['GET', 'POST'])
 @login_required
 def users():
