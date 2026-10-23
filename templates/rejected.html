@@ -70,7 +70,16 @@
             {{ p.description }}
         </p>
     {% endif %}
+<div style="background:#fff3f3;
+            border-left:4px solid #a00020;
+            padding:12px;
+            margin:12px 0;
+            border-radius:6px;">
 
+    <strong>Red Sebebi:</strong><br>
+    {{ p.rejection_reason or 'Red sebebi belirtilmemiş.' }}
+
+</div>
     <footer>
 
         <small>
