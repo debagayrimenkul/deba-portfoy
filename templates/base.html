@@ -27,17 +27,23 @@
             Arşiv
         </a>
 
-        {% if u.role == 'admin' %}
+     {% if u.role == 'admin' %}
 
-            <a href="{{ url_for('pending_portfolios') }}">
-                Onay Bekleyenler
-            </a>
+    <a href="{{ url_for('pending_portfolios') }}">
+        Onay Bekleyenler ({{ pending_count }})
+    </a>
 
-            <a href="{{ url_for('users') }}">
-                Kullanıcılar
-            </a>
+    <a href="{{ url_for('users') }}">
+        Kullanıcılar
+    </a>
 
-        {% endif %}
+{% else %}
+
+    <a href="{{ url_for('rejected_portfolios') }}">
+        Reddedilenler ({{ rejected_count }})
+    </a>
+
+{% endif %}
 
         <a href="{{ url_for('logout') }}">
             Çıkış
