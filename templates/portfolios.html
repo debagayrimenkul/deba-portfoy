@@ -138,29 +138,46 @@
 
     {% else %}
 
-        <p>
-            {{p.rooms or '-'}} ·
-            {{p.sqm|int}} m² ·
-            {{p.floor if p.floor is not none else '-'}}. Kat
-        </p>
+      <div style="
+    background:#f6f2f3;
+    padding:10px 12px;
+    margin:0 -1px;
+">
+    {{p.rooms or '-'}} ·
+    {{p.sqm|int}} m² ·
+    {{p.floor if p.floor is not none else '-'}}. Kat
+</div>
 
-        <p>
-            {{p.block or '-'}} Blok ·
-            Daire {{p.apartment_no or '-'}} ·
-            {{p.facade or '-'}}
-        </p>
+<div style="
+    background:white;
+    padding:10px 12px;
+    margin:0 -1px;
+">
+    {{p.block or '-'}} Blok ·
+    Daire {{p.apartment_no or '-'}} ·
+    {{p.facade or '-'}}
+</div>
 
-        <p>{{p.usage_status or '-'}}</p>
+<div style="
+    background:#f6f2f3;
+    padding:10px 12px;
+    margin:0 -1px;
+">
+    {{p.usage_status or '-'}}
+</div>
 
-        {% if p.province or p.district or p.neighborhood %}
-        <p>
-            📍
-            {{p.province or '-'}} /
-            {{p.district or '-'}} /
-            {{p.neighborhood or '-'}}
-        </p>
-        {% endif %}
-
+{% if p.province or p.district or p.neighborhood %}
+<div style="
+    background:white;
+    padding:10px 12px;
+    margin:0 -1px;
+">
+    📍
+    {{p.province or '-'}} /
+    {{p.district or '-'}} /
+    {{p.neighborhood or '-'}}
+</div>
+{% endif %}
     {% endif %}
 
 
@@ -173,15 +190,26 @@
         margin-bottom:12px;
     ">
 
-        <div>
-            🔒 <strong>Portföy Sahibi:</strong>
-            {{p.owner_name or '-'}}
-        </div>
+        <div style="
+    display:grid;
+    grid-template-columns:22px 125px 1fr;
+    align-items:center;
+">
+    <span>🔒</span>
+    <strong>Portföy Sahibi:</strong>
+    <span>{{p.owner_name or '-'}}</span>
+</div>
 
-        <div style="margin-top:7px;">
-            ☎ <strong>Telefon:</strong>
-            {{p.owner_phone or '-'}}
-        </div>
+<div style="
+    display:grid;
+    grid-template-columns:22px 125px 1fr;
+    align-items:center;
+    margin-top:7px;
+">
+    <span>☎</span>
+    <strong>Telefon:</strong>
+    <span>{{p.owner_phone or '-'}}</span>
+</div>
 
     </div>
     {% endif %}
@@ -236,9 +264,14 @@
             </option>
         </select>
 
-        <button class="danger">
-            Çıkar
-        </button>
+       <button class="danger"
+        style="
+            background:#2f2f2f;
+            color:#8b1538;
+            font-weight:bold;
+        ">
+    Çıkar
+</button>
 
     </form>
 
