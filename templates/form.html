@@ -148,35 +148,36 @@
                required>
     </label>
 
-    <!-- ADMIN ALANLARI -->
-    {% if u.role=='admin' %}
+    <!-- DANIŞMAN SEÇİMİ - SADECE ADMIN -->
+{% if u.role=='admin' %}
 
-    <label>
-        Danışman
-        <select name="advisor_id">
-            {% for a in advisors() %}
-            <option value="{{a.id}}"
-                {% if p and p.advisor_id==a.id %}selected{% endif %}>
-                {{a.name}}
-            </option>
-            {% endfor %}
-        </select>
-    </label>
+<label>
+    Danışman
+    <select name="advisor_id">
+        {% for a in advisors() %}
+        <option value="{{a.id}}"
+            {% if p and p.advisor_id==a.id %}selected{% endif %}>
+            {{a.name}}
+        </option>
+        {% endfor %}
+    </select>
+</label>
 
-    <label>
-        Portföy Sahibi
-        <input name="owner_name"
-               value="{{p.owner_name if p else ''}}">
-    </label>
+{% endif %}
 
-    <label>
-        Telefon
-        <input name="owner_phone"
-               type="tel"
-               value="{{p.owner_phone if p else ''}}">
-    </label>
+<!-- PORTFÖY SAHİBİ - ADMIN VE DANIŞMAN GİREBİLİR -->
+<label>
+    Portföy Sahibi
+    <input name="owner_name"
+           value="{{p.owner_name if p else ''}}">
+</label>
 
-    {% endif %}
+<label>
+    Telefon
+    <input name="owner_phone"
+           type="tel"
+           value="{{p.owner_phone if p else ''}}">
+</label>
 
     <!-- AÇIKLAMA -->
     <label class="wide">
