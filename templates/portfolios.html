@@ -195,49 +195,54 @@
 
         {% if u.role=='admin' or p.advisor_id==u.id %}
 
-        <div>
+       <div style="display:flex;
+            align-items:center;
+            gap:24px;
+            flex-wrap:wrap;
+            margin-top:12px;">
 
-            <a class="smallbutton"
-               href="{{url_for('edit_portfolio',pid=p.id)}}">
-                Düzenle
-            </a>
+    <a class="smallbutton"
+       href="{{url_for('edit_portfolio',pid=p.id)}}">
+        Düzenle
+    </a>
 
-            <form method="post"
-                  action="{{url_for('archive',pid=p.id)}}"
-                  class="inline"
-                  style="margin-left:18px;">
+    <form method="post"
+          action="{{url_for('archive',pid=p.id)}}"
+          class="inline"
+          style="display:flex;
+                 align-items:center;
+                 gap:8px;
+                 margin:0;">
 
-                <select name="reason" required>
+        <select name="reason" required>
+            <option value="">
+                Portföyden çıkar…
+            </option>
 
-                    <option value="">
-                        Portföyden çıkar…
-                    </option>
+            <option>
+                Deba aracılığı ile satıldı
+            </option>
 
-                    <option>
-                        Deba aracılığı ile satıldı
-                    </option>
+            <option>
+                Deba aracılığı ile kiralandı
+            </option>
 
-                    <option>
-                        Deba aracılığı ile kiralandı
-                    </option>
+            <option>
+                Satıştan vazgeçildi
+            </option>
 
-                    <option>
-                        Satıştan vazgeçildi
-                    </option>
+            <option>
+                Kiralamadan vazgeçildi
+            </option>
+        </select>
 
-                    <option>
-                        Kiralamadan vazgeçildi
-                    </option>
+        <button class="danger">
+            Çıkar
+        </button>
 
-                </select>
+    </form>
 
-                <button class="danger">
-                    Çıkar
-                </button>
-
-            </form>
-
-        </div>
+</div>
 
         {% endif %}
 
