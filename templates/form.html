@@ -4,7 +4,16 @@
 <h1>{{ 'Portföy Düzenle' if p else 'Yeni '~tt~' Portföy' }}</h1>
 
 <form method="post" class="form" id="pf">
-
+<div class="wide" style="
+    color:#6b1731;
+    font-size:18px;
+    font-weight:700;
+    border-bottom:2px solid #6b1731;
+    padding-bottom:7px;
+    margin-bottom:4px;
+">
+    Gayrimenkul Bilgileri
+</div>
     <!-- TİP -->
     <label>
         Tipi
@@ -82,7 +91,17 @@
             {% endfor %}
         </select>
     </label>
-
+<div class="wide" style="
+    color:#6b1731;
+    font-size:18px;
+    font-weight:700;
+    border-bottom:2px solid #6b1731;
+    padding-bottom:7px;
+    margin-top:10px;
+    margin-bottom:4px;
+">
+    Konum ve Durum
+</div>
     <!-- KULLANIM DURUMU -->
     <label class="usage-field">
         Kullanım Durumu
@@ -137,7 +156,17 @@
                value="{{p.sqm if p else ''}}"
                required>
     </label>
-
+<div class="wide" style="
+    color:#6b1731;
+    font-size:18px;
+    font-weight:700;
+    border-bottom:2px solid #6b1731;
+    padding-bottom:7px;
+    margin-top:10px;
+    margin-bottom:4px;
+">
+    Fiyat ve Portföy Bilgileri
+</div>
     <!-- FİYAT -->
     <label>
         Fiyat (TL)
@@ -178,7 +207,17 @@
            type="tel"
            value="{{p.owner_phone if p else ''}}">
 </label>
-
+<div class="wide" style="
+    color:#6b1731;
+    font-size:18px;
+    font-weight:700;
+    border-bottom:2px solid #6b1731;
+    padding-bottom:7px;
+    margin-top:10px;
+    margin-bottom:4px;
+">
+    Açıklama ve Notlar
+</div>
     <!-- AÇIKLAMA -->
     <label class="wide">
         Açıklama
