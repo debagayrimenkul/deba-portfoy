@@ -59,7 +59,7 @@
 
     <!-- KAT - DAİRE/VİLLA/İŞ YERİ -->
     <label class="floor-field">
-        Bulunduğu Kat
+        <span id="floor-label">Bulunduğu Kat</span>
         <select name="floor">
             <option value="">-</option>
             {% for x in range(0,31) %}
@@ -232,7 +232,7 @@ function updateForm() {
     show(landFields, false);
 
     document.getElementById('project-label').innerText = 'Proje Adı';
-
+    document.getElementById('floor-label').innerText = 'Bulunduğu Kat';
     if (type === 'Daire') {
 
         show(apartmentFields, true);
@@ -250,6 +250,7 @@ function updateForm() {
         show(floorFields, true);
         show(facadeFields, true);
         show(usageFields, true);
+        document.getElementById('floor-label').innerText = 'Kaç Katlı';
 
     }
 
