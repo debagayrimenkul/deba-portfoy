@@ -69,7 +69,7 @@ def init_db():
     if 'owner_phone' not in columns:
         c.execute("ALTER TABLE portfolios ADD COLUMN owner_phone TEXT")
     if 'rejection_reason' not in columns:
-    c.execute("ALTER TABLE portfolios ADD COLUMN rejection_reason TEXT")
+        c.execute("ALTER TABLE portfolios ADD COLUMN rejection_reason TEXT")
 
     if not c.execute('SELECT 1 FROM users LIMIT 1').fetchone():
         c.execute(
