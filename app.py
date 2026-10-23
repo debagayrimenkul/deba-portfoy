@@ -617,6 +617,12 @@ def reject_portfolio(pid):
     if u['role'] != 'admin':
         return redirect(url_for('index'))
 
+    rejection_reason = request.form.get('rejection_reason', '').strip()
+
+    if not rejection_reason:
+        flash('Portföyü reddetmek için red sebebi yazmalısınız.')
+        return redirect(url_for('pending_portfolios'))
+
     c = db()
 
     now = datetime.now().strftime('%Y-%m-%d %H:%M')
@@ -624,14 +630,15 @@ def reject_portfolio(pid):
     c.execute("""
         UPDATE portfolios
         SET status='rejected',
+            rejection_reason=?,
             updated_at=?
         WHERE id=? AND status='pending'
-    """, (now, pid))
+    """, (rejection_reason, now, pid))
 
     c.commit()
     c.close()
 
-    flash('Portföy reddedildi.')
+    flash('Portföy reddedildi. Red sebebi danışmana iletildi.')
 
     return redirect(url_for('pending_portfolios'))
 @app.route('/admin/users', methods=['GET', 'POST'])
