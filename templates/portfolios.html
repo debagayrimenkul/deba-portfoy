@@ -183,7 +183,17 @@
 </div>
 {% endif %}
     {% endif %}
-
+{% if p.description %}
+<div style="
+    background:#f6f2f3;
+    padding:10px 12px;
+    margin-top:8px;
+    border-radius:8px;
+">
+    <strong>Açıklama:</strong>
+    {{ p.description }}
+</div>
+{% endif %}
 
     {% if u.role=='admin' %}
     <div style="
