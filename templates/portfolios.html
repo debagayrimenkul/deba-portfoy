@@ -295,5 +295,18 @@
 {% endfor %}
 
 </div>
+<script>
+function toggleFilters() {
+    const filters = document.querySelector('.filters');
+    const button = document.querySelector('.mobile-filter-toggle');
 
+    filters.classList.toggle('mobile-open');
+
+    if (filters.classList.contains('mobile-open')) {
+        button.textContent = 'Filtreleri Gizle';
+    } else {
+        button.textContent = 'Filtreleri Göster';
+    }
+}
+</script>
 {% endblock %}
