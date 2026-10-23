@@ -61,3 +61,36 @@
         display:grid;
     }
 }
+/* MOBIL KART ISLEM ALANI */
+@media(max-width:760px){
+
+    .cards footer > div{
+        width:100%;
+        display:grid !important;
+        grid-template-columns:1fr;
+        gap:10px !important;
+    }
+
+    .cards footer .smallbutton{
+        width:100%;
+        text-align:center;
+    }
+
+    .cards footer .inline{
+        width:100%;
+        display:grid !important;
+        grid-template-columns:1fr auto;
+        gap:10px !important;
+    }
+
+    .cards footer .inline select{
+        width:100%;
+        min-width:0;
+        margin:0;
+    }
+
+    .cards footer .inline .danger{
+        margin:0;
+        white-space:nowrap;
+    }
+}
