@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<div class="title">
+    <h1>Reddedilen Portföyler</h1>
+</div>
+
+<p>
+    Admin tarafından reddedilen portföylerinizi burada görebilirsiniz.
+    Portföyü düzenleyip tekrar kaydettiğinizde yeniden admin onayına gönderilir.
+</p>
+
+<div class="cards">
+
+{% for p in rows %}
+
+<article>
+
+    <div class="cardtop">
+        <span>{{ p.property_type }}</span>
+        <strong>{{ '{:,.0f}'.format(p.price).replace(',','.') }} TL</strong>
+    </div>
+
+    <h2>
+        {{ p.project_name or (p.province ~ ' / ' ~ p.district) }}
+    </h2>
+
+    {% if p.property_type == 'Arsa' %}
+
+        <p>
+            📍 {{ p.province or '-' }} /
+            {{ p.district or '-' }} /
+            {{ p.neighborhood or '-' }}
+        </p>
+
+        <p>
+            Ada {{ p.island_no or '-' }} ·
+            Parsel {{ p.parcel_no or '-' }} ·
+            {{ p.sqm|int }} m²
+        </p>
+
+    {% else %}
+
+        <p>
+            {{ p.rooms or '-' }} ·
+            {{ p.sqm|int }} m² ·
+            {{ p.floor if p.floor is not none else '-' }}. Kat
+        </p>
+
+        <p>
+            {{ p.block or '-' }} Blok ·
+            Daire {{ p.apartment_no or '-' }} ·
+            {{ p.facade or '-' }}
+        </p>
+
+        <p>{{ p.usage_status or '-' }}</p>
+
+        <p>
+            📍 {{ p.province or '-' }} /
+            {{ p.district or '-' }} /
+            {{ p.neighborhood or '-' }}
+        </p>
+
+    {% endif %}
+
+    {% if p.description %}
+        <p>
+            <strong>Açıklama:</strong><br>
+            {{ p.description }}
+        </p>
+    {% endif %}
+
+    <footer>
+
+        <small>
+            Son işlem: {{ p.updated_at }}
+        </small>
+
+        <div style="margin-top:12px;">
+
+            <a class="smallbutton"
+               href="{{ url_for('edit_portfolio', pid=p.id) }}">
+                Düzenle ve Tekrar Gönder
+            </a>
+
+        </div>
+
+    </footer>
+
+</article>
+
+{% else %}
+
+<p>Reddedilmiş portföyünüz bulunmuyor.</p>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
