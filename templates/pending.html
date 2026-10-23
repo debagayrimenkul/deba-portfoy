@@ -101,16 +101,22 @@
 
             </form>
 
-            <form method="post"
-                  action="{{ url_for('reject_portfolio', pid=p.id) }}"
-                  class="inline"
-                  onsubmit="return confirm('Bu portföyü reddetmek istediğinize emin misiniz?');">
+           <form method="post"
+      action="{{ url_for('reject_portfolio', pid=p.id) }}"
+      style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"
+      onsubmit="return confirm('Bu portföyü reddetmek istediğinize emin misiniz?');">
 
-                <button type="submit" class="danger">
-                    Reddet
-                </button>
+    <input type="text"
+           name="rejection_reason"
+           placeholder="Red sebebini yazın"
+           required
+           style="min-width:220px;padding:9px;">
 
-            </form>
+    <button type="submit" class="danger">
+        Reddet
+    </button>
+
+</form>
 
         </div>
 
