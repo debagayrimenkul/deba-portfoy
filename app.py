@@ -287,28 +287,15 @@ def save_portfolio(pid, tt, u):
         else u['id']
     )
 
-    # Bu iki özel bilgi yalnızca admin tarafından girilebilir/değiştirilebilir
-    if u['role'] == 'admin':
-        owner_name = f.get('owner_name', '').strip()
-        owner_phone = f.get('owner_phone', '').strip()
-    else:
-        owner_name = None
-        owner_phone = None
+       # Portföy sahibi ve telefon bilgisi portföyü giren kişi tarafından kaydedilir.
+    # Bu bilgilerin kimlere gösterileceğini ekran tarafında ayrıca kontrol ediyoruz.
+    owner_name = f.get('owner_name', '').strip()
+    owner_phone = f.get('owner_phone', '').strip()
 
     c = db()
 
     if pid:
-        # Admin olmayan kullanıcı düzenleme yaparken
-        # mevcut sahip/telefon bilgilerini değiştiremesin.
-        if u['role'] != 'admin':
-            old = c.execute(
-                'SELECT owner_name, owner_phone FROM portfolios WHERE id=?',
-                (pid,)
-            ).fetchone()
-
-            if old:
-                owner_name = old['owner_name']
-                owner_phone = old['owner_phone']
+        
 
         vals = [
             tt,
@@ -540,7 +527,34 @@ def archive_list():
         u=current_user(),
         rows=rows
     )
+@app.route('/rejected')
+@login_required
+def rejected_portfolios():
+    u = current_user()
 
+    # Bu ekran danışmanların kendi reddedilen portföyleri içindir.
+    # Admin bu ekrana girerse ana sayfaya döner.
+    if u['role'] == 'admin':
+        return redirect(url_for('index'))
+
+    c = db()
+
+    rows = c.execute("""
+        SELECT p.*, u.name advisor
+        FROM portfolios p
+        JOIN users u ON u.id = p.advisor_id
+        WHERE p.status='rejected'
+        AND p.advisor_id=?
+        ORDER BY p.updated_at DESC
+    """, (u['id'],)).fetchall()
+
+    c.close()
+
+    return render_template(
+        'rejected.html',
+        u=u,
+        rows=rows
+    )
 @app.route('/admin/pending')
 @login_required
 def pending_portfolios():
@@ -747,7 +761,41 @@ def helpers():
         c.close()
         return x
 
-    return dict(advisors=advisors)
+    pending_count = 0
+    rejected_count = 0
+
+    u = current_user()
+
+    if u:
+        c = db()
+
+        if u['role'] == 'admin':
+            row = c.execute(
+                "SELECT COUNT(*) n FROM portfolios WHERE status='pending'"
+            ).fetchone()
+
+            pending_count = row['n']
+
+        else:
+            row = c.execute(
+                """
+                SELECT COUNT(*) n
+                FROM portfolios
+                WHERE status='rejected'
+                AND advisor_id=?
+                """,
+                (u['id'],)
+            ).fetchone()
+
+            rejected_count = row['n']
+
+        c.close()
+
+    return dict(
+        advisors=advisors,
+        pending_count=pending_count,
+        rejected_count=rejected_count
+    )
 
 
 if __name__ == '__main__':
