@@ -94,3 +94,29 @@
         white-space:nowrap;
     }
 }
+/* MOBIL YATAY PORTFOY KARTLARI */
+@media(max-width:760px){
+
+    .cards{
+        display:flex;
+        overflow-x:auto;
+        gap:14px;
+        scroll-snap-type:x mandatory;
+        scroll-behavior:smooth;
+        padding:4px 22px 18px 0;
+        -webkit-overflow-scrolling:touch;
+    }
+
+    .cards article{
+        flex:0 0 92%;
+        scroll-snap-align:start;
+    }
+
+    .cards::-webkit-scrollbar{
+        display:none;
+    }
+
+    .cards{
+        scrollbar-width:none;
+    }
+}
