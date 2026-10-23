@@ -33,3 +33,31 @@
         background:rgba(255,255,255,.12);
     }
 }
+/* MOBIL FILTRE BUTONU */
+.mobile-filter-toggle{
+    display:none;
+}
+
+@media(max-width:760px){
+    .mobile-filter-toggle{
+        display:block;
+        width:100%;
+        margin:14px 0 8px;
+        padding:12px;
+        background:#6b1731;
+        color:white;
+        border:0;
+        border-radius:9px;
+        font-size:15px;
+        font-weight:bold;
+        cursor:pointer;
+    }
+
+    .filters{
+        display:none;
+    }
+
+    .filters.mobile-open{
+        display:grid;
+    }
+}
