@@ -139,7 +139,7 @@ nav a.active-nav{
     }
 
     .cards article{
-        flex:0 0 96%;
+        flex:0 0 98%;
         scroll-snap-align:start;
     }
 
