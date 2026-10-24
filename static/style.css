@@ -350,3 +350,39 @@ nav a.active-nav{
         margin-top:4px !important;
     }
 }
+/* MOBIL HIZLI ODA FILTRELERI */
+.quick-room-filters{
+    display:none;
+}
+
+@media(max-width:760px){
+
+    .quick-room-filters{
+        display:grid;
+        grid-template-columns:repeat(5, 1fr);
+        gap:6px;
+        width:100%;
+        margin:10px 0 8px;
+    }
+
+    .quick-room-filters button{
+        background:white;
+        color:#7d1535;
+        border:2px solid #7d1535;
+        border-radius:9px;
+        padding:9px 2px;
+        font-size:14px;
+        font-weight:700;
+        cursor:pointer;
+        box-shadow:0 2px 4px rgba(0,0,0,.10);
+    }
+
+    .quick-room-filters button.active{
+        background:#7d1535;
+        color:white;
+    }
+
+    .quick-room-filters button:active{
+        transform:translateY(1px);
+    }
+}
