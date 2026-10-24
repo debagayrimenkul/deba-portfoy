@@ -378,5 +378,39 @@ function toggleFilters() {
     });
 
 });
+
+        });
+
+/* HIZLI ODA FILTRELERI */
+const quickRoomButtons = document.querySelectorAll('.quick-room-filters button');
+
+quickRoomButtons.forEach(function(button) {
+
+    button.addEventListener('click', function() {
+
+        const selectedRoom = this.dataset.room;
+        const url = new URL(window.location.href);
+
+        if (url.searchParams.get('rooms') === selectedRoom) {
+            url.searchParams.delete('rooms');
+        } else {
+            url.searchParams.set('rooms', selectedRoom);
+        }
+
+        window.location.href = url.toString();
+    });
+
+});
+
+const currentParams = new URLSearchParams(window.location.search);
+const currentRoom = currentParams.get('rooms');
+
+quickRoomButtons.forEach(function(button) {
+    if (button.dataset.room === currentRoom) {
+        button.classList.add('active');
+    }
+});
+
 </script>
 {% endblock %}
+
