@@ -156,21 +156,12 @@ nav a.active-nav{
 
     .cards article{
         position:relative;
-        padding:18px 18px 18px 28px;
+        padding:18px;
         overflow:hidden;
     }
 
     /* Kartin solundaki bordo cizgi */
-    .cards article::before{
-        content:"";
-        position:absolute;
-        left:0;
-        top:0;
-        bottom:0;
-        width:7px;
-        background:#7d1535;
-        border-radius:14px 0 0 14px;
-    }
+   
 
     .property-details{
         margin-top:14px;
