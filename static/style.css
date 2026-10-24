@@ -151,3 +151,77 @@ nav a.active-nav{
         scrollbar-width:none;
     }
 }
+/* MOBIL PORTFOY KART DETAY TASARIMI */
+@media(max-width:760px){
+
+    .cards article{
+        position:relative;
+        padding:18px 18px 18px 28px;
+        overflow:hidden;
+    }
+
+    /* Kartin solundaki bordo cizgi */
+    .cards article::before{
+        content:"";
+        position:absolute;
+        left:0;
+        top:0;
+        bottom:0;
+        width:7px;
+        background:#7d1535;
+        border-radius:14px 0 0 14px;
+    }
+
+    .property-details{
+        margin-top:14px;
+        border-top:1px solid #ddd;
+    }
+
+    .detail-row{
+        padding:13px 4px;
+        border-bottom:1px solid #ddd;
+    }
+
+    .detail-row strong{
+        display:block;
+        margin-top:4px;
+        font-size:16px;
+        line-height:1.25;
+    }
+
+    .detail-label{
+        display:block;
+        font-size:12px;
+        color:#666;
+        font-weight:500;
+        margin-bottom:2px;
+    }
+
+    /* Iki bilgiyi yan yana goster */
+    .detail-two{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:0;
+    }
+
+    .detail-two > div{
+        padding:0 14px;
+    }
+
+    .detail-two > div:first-child{
+        padding-left:0;
+        border-right:3px solid #7d1535;
+    }
+
+    .detail-two > div:last-child{
+        padding-right:0;
+        padding-left:18px;
+    }
+
+    /* Adresi mobilde tek satirda tut */
+    .address-row strong{
+        white-space:nowrap;
+        font-size:13px;
+        letter-spacing:-0.2px;
+    }
+}
