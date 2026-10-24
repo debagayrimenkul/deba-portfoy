@@ -300,3 +300,27 @@ nav a.active-nav{
         font-weight:700 !important;
     }
 }
+/* MOBIL KART DIKEY SIKILASTIRMA */
+@media(max-width:760px){
+
+    .property-details{
+        margin-top:8px;
+    }
+
+    .detail-row{
+        padding:9px 4px;
+    }
+
+    .detail-row strong{
+        margin-top:2px;
+        line-height:1.15;
+    }
+
+    .detail-label{
+        margin-bottom:1px;
+    }
+
+    .cards article h2{
+        margin:8px 0 10px;
+    }
+}
