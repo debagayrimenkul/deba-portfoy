@@ -142,46 +142,51 @@
 
     {% else %}
 
-      <div style="
-    background:#f6f2f3;
-    padding:10px 12px;
-    margin:0 -1px;
-">
-    {{p.rooms or '-'}} ·
-    {{p.sqm|int}} m² ·
-    {{p.floor if p.floor is not none else '-'}}. Kat
-</div>
+    <div class="property-details">
 
-<div style="
-    background:white;
-    padding:10px 12px;
-    margin:0 -1px;
-">
-    {{p.block or '-'}} Blok ·
-    Daire {{p.apartment_no or '-'}} ·
-    {{p.facade or '-'}}
-</div>
+    <div class="detail-row detail-two">
+        <div>
+            <span class="detail-label">Oda Tipi</span>
+            <strong>{{p.rooms or '-'}}</strong>
+        </div>
 
-<div style="
-    background:#f6f2f3;
-    padding:10px 12px;
-    margin:0 -1px;
-">
-    {{p.usage_status or '-'}}
-</div>
+        <div>
+            <span class="detail-label">Kullanım Durumu</span>
+            <strong>{{p.usage_status or '-'}}</strong>
+        </div>
+    </div>
 
-{% if p.province or p.district or p.neighborhood %}
-<div style="
-    background:white;
-    padding:10px 12px;
-    margin:0 -1px;
-">
-    📍
-    {{p.province or '-'}} /
-    {{p.district or '-'}} /
-    {{p.neighborhood or '-'}}
+    <div class="detail-row detail-two">
+        <div>
+            <span class="detail-label">M²</span>
+            <strong>{{p.sqm|int}} M²</strong>
+        </div>
+
+        <div>
+            <span class="detail-label">Cephe</span>
+            <strong>{{p.facade or '-'}}</strong>
+        </div>
+    </div>
+
+    <div class="detail-row">
+        <span class="detail-label">Blok · Kat · Daire No</span>
+        <strong>
+            {{p.block or '-'}} BLOK ·
+            {{p.floor if p.floor is not none else '-'}}. KAT ·
+            DAİRE {{p.apartment_no or '-'}}
+        </strong>
+    </div>
+
+    {% if p.province or p.district or p.neighborhood %}
+    <div class="detail-row address-row">
+        <span class="detail-label">📍 Adres</span>
+        <strong>
+            {{p.province or '-'}} / {{p.district or '-'}} / {{p.neighborhood or '-'}}
+        </strong>
+    </div>
+    {% endif %}
+
 </div>
-{% endif %}
     {% endif %}
 {% if p.description %}
 <div style="
