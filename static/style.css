@@ -216,3 +216,33 @@ nav a.active-nav{
         letter-spacing:-0.2px;
     }
 }
+/* MOBIL KART KAYDIRMA NOKTALARI */
+.card-dots{
+    display:none;
+}
+
+@media(max-width:760px){
+
+    .card-dots{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:7px;
+        margin:2px 0 14px;
+        min-height:14px;
+    }
+
+    .card-dot{
+        width:7px;
+        height:7px;
+        border-radius:50%;
+        background:#c9c3c5;
+        transition:all .2s ease;
+    }
+
+    .card-dot.active{
+        width:10px;
+        height:10px;
+        background:#7d1535;
+    }
+}
