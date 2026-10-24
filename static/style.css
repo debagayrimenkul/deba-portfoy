@@ -273,3 +273,25 @@ nav a.active-nav{
         margin:12px 0 14px;
     }
 }
+/* MOBIL CARDTOP DUZELTME */
+@media(max-width:760px){
+
+    .cards article .cardtop{
+        display:flex !important;
+        flex-direction:row !important;
+        justify-content:space-between !important;
+        align-items:center !important;
+        width:100%;
+        gap:12px !important;
+    }
+
+    .cards article .cardtop span{
+        margin:0 !important;
+        text-align:left !important;
+    }
+
+    .cards article .cardtop strong{
+        margin:0 0 0 auto !important;
+        text-align:right !important;
+    }
+}
