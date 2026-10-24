@@ -33,12 +33,12 @@
     Ana Sayfa
 </a>
        <a href="{{ url_for('portfolios', tt='Satılık') }}"
-   class="{% if request.endpoint == 'portfolios' and request.args.get('tt') == 'Satılık' %}active-nav{% endif %}">
+  class="{% if request.endpoint == 'portfolios' and request.view_args.get('tt') == 'Satılık' %}active-nav{% endif %}">
     Satılık
 </a>
 
        <a href="{{ url_for('portfolios', tt='Kiralık') }}"
-   class="{% if request.endpoint == 'portfolios' and request.args.get('tt') == 'Kiralık' %}active-nav{% endif %}">
+  class="{% if request.endpoint == 'portfolios' and request.view_args.get('tt') == 'Kiralık' %}active-nav{% endif %}">
     Kiralık
 </a>
 
