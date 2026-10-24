@@ -49,19 +49,22 @@
 
      {% if u.role == 'admin' %}
 
-    <a href="{{ url_for('pending_portfolios') }}">
-        Onay Bekleyenler ({{ pending_count }})
-    </a>
+    <a href="{{ url_for('pending_portfolios') }}"
+   class="{% if request.endpoint == 'pending_portfolios' %}active-nav{% endif %}">
+    Onay Bekleyenler ({{ pending_count }})
+</a>
 
-    <a href="{{ url_for('users') }}">
-        Kullanıcılar
-    </a>
+    <a href="{{ url_for('users') }}"
+   class="{% if request.endpoint == 'users' %}active-nav{% endif %}">
+    Kullanıcılar
+</a>
 
 {% else %}
 
-    <a href="{{ url_for('rejected_portfolios') }}">
-        Reddedilenler ({{ rejected_count }})
-    </a>
+    <a href="{{ url_for('rejected_portfolios') }}"
+   class="{% if request.endpoint == 'rejected_portfolios' %}active-nav{% endif %}">
+    Reddedilenler ({{ rejected_count }})
+</a>
 
 {% endif %}
 
