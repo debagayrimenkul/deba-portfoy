@@ -324,3 +324,29 @@ nav a.active-nav{
         margin:8px 0 10px;
     }
 }
+/* MOBIL KART SON SIKILASTIRMA */
+@media(max-width:760px){
+
+    /* Bilgi satirlarini biraz daha kisalt */
+    .detail-row{
+        padding-top:6px;
+        padding-bottom:6px;
+    }
+
+    /* Portfoy sahibi / telefon kutusunu kisalt */
+    .cards article > div[style*="background:#f6f2f3"][style*="margin-top:12px"]{
+        padding-top:8px !important;
+        padding-bottom:8px !important;
+        margin-top:8px !important;
+        margin-bottom:8px !important;
+    }
+
+    /* Sahip ve telefon arasindaki boslugu azalt */
+    .cards article > div[style*="background:#f6f2f3"][style*="margin-top:12px"] > div{
+        line-height:1.15;
+    }
+
+    .cards article > div[style*="background:#f6f2f3"][style*="margin-top:12px"] > div:last-child{
+        margin-top:4px !important;
+    }
+}
