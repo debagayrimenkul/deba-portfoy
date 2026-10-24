@@ -295,3 +295,8 @@ nav a.active-nav{
         text-align:right !important;
     }
 }
+@media(max-width:760px){
+    .cards article .cardtop span{
+        font-weight:700 !important;
+    }
+}
