@@ -37,15 +37,15 @@
     );
 
     border:1px solid rgba(255,255,255,.85);
-    border-radius:10px;
+    border-radius:12px;
 
     text-decoration:none;
     line-height:1;
 
-    box-shadow:
-        0 4px 0 #4b0d21,
-        0 6px 9px rgba(0,0,0,.28),
-        inset 0 1px 0 rgba(255,255,255,.30);
+   box-shadow:
+    0 5px 12px rgba(45,5,18,.38),
+    inset 0 1px 1px rgba(255,255,255,.35),
+    inset 0 -1px 1px rgba(55,5,22,.30);
 
     transition:all .15s ease;
 }
