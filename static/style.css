@@ -23,22 +23,32 @@
         padding-top:10px;
     }
 
-    nav a{
-        font-size:14px;
-        font-weight:600;
-        padding:9px 12px;
-        border:1px solid rgba(255,255,255,.75);
-        border-radius:9px;
-        text-decoration:none;
-        line-height:1;
-      box-shadow:
-    0 5px 0 rgba(70,8,28,.75),
-    0 7px 10px rgba(0,0,0,.30),
-    inset 0 2px 2px rgba(255,255,255,.22);
+   nav a{
+    font-size:14px;
+    font-weight:600;
+    padding:10px 13px;
 
-transition:all .15s ease;
-    }
+    color:white;
+    background:linear-gradient(
+        180deg,
+        #8a2948 0%,
+        #741a38 55%,
+        #64132e 100%
+    );
 
+    border:1px solid rgba(255,255,255,.85);
+    border-radius:10px;
+
+    text-decoration:none;
+    line-height:1;
+
+    box-shadow:
+        0 4px 0 #4b0d21,
+        0 6px 9px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.30);
+
+    transition:all .15s ease;
+}
     nav a:active{
         background:white;
         color:#6b1731;
