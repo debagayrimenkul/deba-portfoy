@@ -1,1 +1,82 @@
-{% extends 'base.html' %}{% block body %}<h1>Portföy Arşivi</h1><div class="cards">{% for p in rows %}<article><div class="cardtop"><span>{{p.transaction_type}} · {{p.property_type}}</span><strong>{{'{:,.0f}'.format(p.price).replace(',','.')}} TL</strong></div><h2>{{p.project_name or p.neighborhood}}</h2><p>{{p.sqm|int}} m² · {{p.advisor}}</p><p><b>Çıkarma nedeni:</b> {{p.removal_reason}}</p><small>{{p.removed_at}}</small></article>{% else %}<p>Arşiv boş.</p>{% endfor %}</div>{% endblock %}
+{% extends 'base.html' %}
+
+{% block body %}
+
+<h1>Portföy Arşivi</h1>
+
+<div class="archive-filters">
+
+    <a href="{{ url_for('archive_list') }}"
+       class="{% if not request.args.get('reason') %}active{% endif %}">
+        Tümü
+    </a>
+
+    <a href="{{ url_for('archive_list', reason='Deba aracılığı ile satıldı') }}"
+       class="{% if request.args.get('reason') == 'Deba aracılığı ile satıldı' %}active{% endif %}">
+        Satıldı
+    </a>
+
+    <a href="{{ url_for('archive_list', reason='Deba aracılığı ile kiralandı') }}"
+       class="{% if request.args.get('reason') == 'Deba aracılığı ile kiralandı' %}active{% endif %}">
+        Kiralandı
+    </a>
+
+    <a href="{{ url_for('archive_list', reason='Satıştan vazgeçildi') }}"
+       class="{% if request.args.get('reason') == 'Satıştan vazgeçildi' %}active{% endif %}">
+        Satıştan Vazgeçildi
+    </a>
+
+    <a href="{{ url_for('archive_list', reason='Kiralamadan vazgeçildi') }}"
+       class="{% if request.args.get('reason') == 'Kiralamadan vazgeçildi' %}active{% endif %}">
+        Kiralamadan Vazgeçildi
+    </a>
+
+</div>
+
+
+<div class="cards">
+
+{% for p in rows %}
+
+<article>
+
+    <div class="cardtop">
+
+        <span>
+            {{p.transaction_type}} · {{p.property_type}}
+        </span>
+
+        <strong>
+            {{'{:,.0f}'.format(p.price).replace(',','.')}} TL
+        </strong>
+
+    </div>
+
+    <h2>
+        {{p.project_name or p.neighborhood}}
+    </h2>
+
+    <p>
+        {{p.sqm|int}} m² · {{p.advisor}}
+    </p>
+
+    <p>
+        <b>Çıkarma nedeni:</b>
+        {{p.removal_reason}}
+    </p>
+
+    <small>
+        {{p.removed_at}}
+    </small>
+
+</article>
+
+{% else %}
+
+<p>Bu filtreye uygun arşivlenmiş portföy bulunamadı.</p>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
