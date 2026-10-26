@@ -386,3 +386,52 @@ nav a.active-nav{
         transform:translateY(1px);
     }
 }
+/* ARSIV HIZLI FILTRELER */
+
+.archive-filters{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin:18px 0 22px;
+}
+
+.archive-filters a{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:11px 16px;
+
+    background:white;
+    color:#7d1535;
+
+    border:2px solid #7d1535;
+    border-radius:10px;
+
+    font-size:14px;
+    font-weight:700;
+    text-decoration:none;
+}
+
+.archive-filters a.active{
+    background:#7d1535;
+    color:white;
+}
+
+@media(max-width:760px){
+
+    .archive-filters{
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+        gap:8px;
+    }
+
+    .archive-filters a{
+        padding:11px 6px;
+        font-size:13px;
+        text-align:center;
+    }
+
+    .archive-filters a:first-child{
+        grid-column:1 / -1;
+    }
+}
