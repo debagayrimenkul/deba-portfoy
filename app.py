@@ -538,7 +538,7 @@ def archive_list():
         u=current_user(),
         rows=rows
     )
-    @app.route('/portfolio/<int:pid>/reactivate', methods=['POST'])
+@app.route('/portfolio/<int:pid>/reactivate', methods=['POST'])
 @login_required
 def reactivate_portfolio(pid):
     u = current_user()
