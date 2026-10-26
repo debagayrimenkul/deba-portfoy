@@ -435,3 +435,21 @@ nav a.active-nav{
         grid-column:1 / -1;
     }
 }
+/* MOBIL MENU 2 SATIR */
+@media(max-width:760px){
+    header nav{
+        display:grid;
+        grid-template-columns:repeat(4, auto);
+        justify-content:start;
+        gap:8px;
+        width:100%;
+    }
+
+    header nav a{
+        margin:0;
+        white-space:nowrap;
+        padding:9px 12px;
+        font-size:14px;
+        text-align:center;
+    }
+}
