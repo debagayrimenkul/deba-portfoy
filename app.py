@@ -792,7 +792,7 @@ def reset_password(uid):
 
     flash('Kullanıcının şifresi değiştirildi.')
     return redirect(url_for('users'))
-    @app.route('/change-password', methods=['GET', 'POST'])
+@app.route('/change-password', methods=['GET', 'POST'])
 @login_required
 def change_password():
     u = current_user()
