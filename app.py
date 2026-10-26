@@ -2,10 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3, os
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'change-me-in-production')
+app.permanent_session_lifetime = timedelta(days=30)
 DB = 'deba.db'
 
 
@@ -123,12 +124,17 @@ def login():
 
         if u and check_password_hash(u['password'], request.form['password']):
             session['uid'] = u['id']
+
+            if request.form.get('remember_me'):
+                session.permanent = True
+            else:
+                session.permanent = False
+
             return redirect(url_for('index'))
 
         flash('Kullanıcı adı veya şifre hatalı.')
 
     return render_template('login.html')
-
 
 @app.route('/logout')
 def logout():
