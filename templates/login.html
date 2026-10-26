@@ -1,1 +1,43 @@
-<!doctype html><html lang="tr"><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/static/style.css"><title>Deba Portföy</title></head><body class="login"><form method="post" class="panel"><h1>Deba Portföy</h1><p>Ofis Portföy Yönetimi</p><label>Kullanıcı adı<input name="username" required></label><label>Şifre<input name="password" type="password" required></label><button>Giriş Yap</button>{% for m in get_flashed_messages() %}<div class="flash">{{m}}</div>{% endfor %}</form></body></html>
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Deba Portföy</title>
+</head>
+
+<body class="login">
+
+<form method="post" class="panel">
+
+    <h1>Deba Portföy</h1>
+    <p>Ofis Portföy Yönetimi</p>
+
+    <label>
+        Kullanıcı adı
+        <input name="username" required>
+    </label>
+
+    <label>
+        Şifre
+        <input name="password" type="password" required>
+    </label>
+
+    <label style="display:flex; align-items:center; gap:8px; margin:10px 0 16px;">
+        <input type="checkbox"
+               name="remember_me"
+               value="1"
+               style="width:auto; margin:0;">
+        Beni Hatırla
+    </label>
+
+    <button>Giriş Yap</button>
+
+    {% for m in get_flashed_messages() %}
+        <div class="flash">{{m}}</div>
+    {% endfor %}
+
+</form>
+
+</body>
+</html>
