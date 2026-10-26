@@ -68,7 +68,20 @@
     <small>
         {{p.removed_at}}
     </small>
+{% if u.role == 'admin' %}
+<form method="post"
+      action="{{ url_for('reactivate_portfolio', pid=p.id) }}"
+      style="margin-top:16px;"
+      onsubmit="return confirm('Bu portföy tekrar aktif portföylere alınsın mı?');">
 
+    <button type="submit"
+            class="button"
+            style="width:100%;">
+        Tekrar Aktife Al
+    </button>
+
+</form>
+{% endif %}
 </article>
 
 {% else %}
