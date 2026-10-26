@@ -538,6 +538,32 @@ def archive_list():
         u=current_user(),
         rows=rows
     )
+    @app.route('/portfolio/<int:pid>/reactivate', methods=['POST'])
+@login_required
+def reactivate_portfolio(pid):
+    u = current_user()
+
+    # Sadece admin tekrar aktife alabilir
+    if u['role'] != 'admin':
+        return redirect(url_for('index'))
+
+    c = db()
+
+    c.execute("""
+        UPDATE portfolios
+        SET status='active',
+            removal_reason=NULL,
+            removed_at=NULL,
+            removed_by=NULL,
+            updated_at=CURRENT_TIMESTAMP
+        WHERE id=?
+        AND status='archived'
+    """, (pid,))
+
+    c.commit()
+    c.close()
+
+    return redirect(url_for('archive_list'))
 @app.route('/rejected')
 @login_required
 def rejected_portfolios():
