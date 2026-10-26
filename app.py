@@ -792,6 +792,45 @@ def reset_password(uid):
 
     flash('Kullanıcının şifresi değiştirildi.')
     return redirect(url_for('users'))
+    @app.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    u = current_user()
+
+    if request.method == 'POST':
+        current_password = request.form.get('current_password', '')
+        new_password = request.form.get('new_password', '').strip()
+        confirm_password = request.form.get('confirm_password', '').strip()
+
+        if not check_password_hash(u['password'], current_password):
+            flash('Mevcut şifreniz yanlış.')
+            return redirect(url_for('change_password'))
+
+        if len(new_password) < 6:
+            flash('Yeni şifre en az 6 karakter olmalıdır.')
+            return redirect(url_for('change_password'))
+
+        if new_password != confirm_password:
+            flash('Yeni şifreler birbiriyle aynı değil.')
+            return redirect(url_for('change_password'))
+
+        c = db()
+
+        c.execute(
+            'UPDATE users SET password=? WHERE id=?',
+            (generate_password_hash(new_password), u['id'])
+        )
+
+        c.commit()
+        c.close()
+
+        flash('Şifreniz başarıyla değiştirildi.')
+        return redirect(url_for('index'))
+
+    return render_template(
+        'change_password.html',
+        u=u
+    )
 @app.context_processor
 def helpers():
     def advisors():
