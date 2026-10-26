@@ -512,15 +512,24 @@ def archive(pid):
 def archive_list():
     c = db()
 
-    rows = c.execute(
-        """
+    reason = request.args.get('reason', '').strip()
+
+    q = """
         SELECT p.*, u.name advisor
         FROM portfolios p
         JOIN users u ON u.id=p.advisor_id
         WHERE p.status='archived'
-        ORDER BY removed_at DESC
-        """
-    ).fetchall()
+    """
+
+    args = []
+
+    if reason:
+        q += " AND p.removal_reason=?"
+        args.append(reason)
+
+    q += " ORDER BY p.removed_at DESC"
+
+    rows = c.execute(q, args).fetchall()
 
     c.close()
 
