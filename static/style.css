@@ -439,17 +439,22 @@ nav a.active-nav{
 @media(max-width:760px){
     header nav{
         display:grid;
-        grid-template-columns:repeat(4, auto);
-        justify-content:start;
-        gap:8px;
+        grid-template-columns:repeat(4, 1fr);
+        gap:7px;
         width:100%;
     }
 
     header nav a{
+        min-width:0;
+        width:100%;
         margin:0;
-        white-space:nowrap;
-        padding:9px 12px;
-        font-size:14px;
+        padding:9px 4px;
+        font-size:13px;
         text-align:center;
+        white-space:nowrap;
+    }
+
+    header nav a:nth-child(5){
+        font-size:12px;
     }
 }
