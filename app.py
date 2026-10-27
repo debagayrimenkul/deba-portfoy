@@ -290,7 +290,7 @@ def portfolios(tt):
     rows = c.execute(q, args).fetchall()
 
     projects = [
-        x[0] for x in c.execute("""
+       x['project_name'] for x in c.execute("""
             SELECT DISTINCT project_name
             FROM portfolios
             WHERE project_name IS NOT NULL
