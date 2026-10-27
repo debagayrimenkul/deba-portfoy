@@ -426,7 +426,67 @@ def save_portfolio(pid, tt, u):
                 ?,?,?,?,?,?,?,?,?,?,?,?
             )
         ''', vals)
+        # Yeni eklenen portföyün ID'sini al
+        new_portfolio_id = c.execute(
+            "SELECT last_insert_rowid() AS id"
+        ).fetchone()['id']
 
+        # Admin yeni portföy girdiyse tüm aktif danışmanlara bildirim gönder
+        if u['role'] == 'admin':
+
+            advisor_user = c.execute(
+                "SELECT name FROM users WHERE id=?",
+                (advisor,)
+            ).fetchone()
+
+            advisor_name = (
+                advisor_user['name']
+                if advisor_user
+                else u['name']
+            )
+
+            location = (
+                f.get('project_name')
+                or f.get('neighborhood')
+                or ''
+            )
+
+            message = (
+                f"{advisor_name} yeni bir "
+                f"{tt} "
+                f"{f['property_type']} portföy ekledi"
+            )
+
+            if f.get('rooms'):
+                message += f" - {f.get('rooms')}"
+
+            if location:
+                message += f" - {location}"
+
+            recipients = c.execute("""
+                SELECT id
+                FROM users
+                WHERE active=1
+                  AND role!='admin'
+            """).fetchall()
+
+            for recipient in recipients:
+                c.execute("""
+                    INSERT INTO notifications(
+                        user_id,
+                        portfolio_id,
+                        message,
+                        is_read,
+                        created_at
+                    )
+                    VALUES(?,?,?,?,?)
+                """, (
+                    recipient['id'],
+                    new_portfolio_id,
+                    message,
+                    0,
+                    now
+                ))
     c.commit()
     c.close()
 
