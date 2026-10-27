@@ -457,4 +457,90 @@ nav a.active-nav{
     header nav a:nth-child(5){
         font-size:12px;
     }
+
+    /* MASAUSTU PORTFOY KART TASARIMI */
+@media(min-width:761px){
+
+    .cards{
+        grid-template-columns:repeat(2, 1fr);
+        gap:20px;
+    }
+
+    .cards article{
+        padding:22px;
+        border-radius:18px;
+    }
+
+    .cards .cardtop{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:20px;
+        margin-bottom:10px;
+    }
+
+    .cards .cardtop span{
+        font-size:17px;
+        font-weight:700;
+        white-space:nowrap;
+    }
+
+    .cards .cardtop strong{
+        font-size:20px;
+        white-space:nowrap;
+        margin-left:auto;
+    }
+
+    .cards article h2{
+        font-size:22px;
+        margin:14px 0 16px;
+    }
+
+    .property-details{
+        margin-top:10px;
+        border-top:1px solid #ddd;
+    }
+
+    .detail-row{
+        padding:10px 4px;
+        border-bottom:1px solid #ddd;
+    }
+
+    .detail-label{
+        display:block;
+        font-size:13px;
+        color:#666;
+        font-weight:500;
+        margin-bottom:3px;
+    }
+
+    .detail-row strong{
+        display:block;
+        margin-top:3px;
+        font-size:16px;
+        line-height:1.25;
+    }
+
+    .detail-two{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+    }
+
+    .detail-two > div{
+        padding:0 18px;
+    }
+
+    .detail-two > div:first-child{
+        padding-left:0;
+        border-right:3px solid #7d1535;
+    }
+
+    .detail-two > div:last-child{
+        padding-right:0;
+    }
+
+    .cards footer{
+        margin-top:16px;
+    }
+}
 }
