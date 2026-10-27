@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="pagehead">
+    <div>
+        <h1>🔔 Bildirimler</h1>
+        <p>Ofise eklenen yeni portföyler</p>
+    </div>
+</div>
+
+{% if rows %}
+
+<div class="cards">
+
+    {% for n in rows %}
+
+    <article>
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:12px;
+        ">
+
+            <strong style="color:#7d1535;">
+                Yeni Portföy
+            </strong>
+
+            <span style="
+                font-size:12px;
+                color:#777;
+                white-space:nowrap;
+            ">
+                {{ n.created_at }}
+            </span>
+
+        </div>
+
+        <div style="
+            margin-top:12px;
+            font-size:15px;
+            line-height:1.5;
+        ">
+            {{ n.message }}
+        </div>
+
+        {% if n.portfolio_id %}
+
+        <div style="margin-top:14px;">
+
+            <a class="smallbutton"
+               href="{{ url_for('portfolios', tt=n.transaction_type) }}">
+                Portföyü Gör
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </article>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="panel">
+    <p>Henüz bildiriminiz bulunmuyor.</p>
+</div>
+
+{% endif %}
+
+{% endblock %}
