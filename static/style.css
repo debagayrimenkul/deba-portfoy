@@ -544,3 +544,61 @@ nav a.active-nav{
     }
 }
 }
+
+
+/* MASAUSTU KART DETAYLARINI ZORLA */
+@media(min-width:761px){
+
+    .cards article .property-details{
+        display:block !important;
+        margin-top:12px !important;
+        border-top:1px solid #ddd !important;
+    }
+
+    .cards article .detail-row{
+        display:block !important;
+        padding:11px 4px !important;
+        border-bottom:1px solid #ddd !important;
+    }
+
+    .cards article .detail-row.detail-two{
+        display:grid !important;
+        grid-template-columns:1fr 1fr !important;
+        align-items:start !important;
+    }
+
+    .cards article .detail-two > div{
+        display:block !important;
+        padding:0 18px !important;
+    }
+
+    .cards article .detail-two > div:first-child{
+        padding-left:0 !important;
+        border-right:3px solid #7d1535 !important;
+    }
+
+    .cards article .detail-two > div:last-child{
+        padding-right:0 !important;
+        padding-left:18px !important;
+    }
+
+    .cards article .detail-label{
+        display:block !important;
+        font-size:13px !important;
+        color:#666 !important;
+        font-weight:500 !important;
+        margin-bottom:4px !important;
+        text-transform:uppercase;
+    }
+
+    .cards article .detail-row strong{
+        display:block !important;
+        font-size:17px !important;
+        line-height:1.25 !important;
+        margin:0 !important;
+    }
+
+    .cards article .address-row strong{
+        font-size:15px !important;
+    }
+}
