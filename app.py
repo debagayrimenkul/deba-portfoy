@@ -904,6 +904,43 @@ def change_password():
         'change_password.html',
         u=u
     )
+@app.route('/notifications')
+@login_required
+def notifications():
+    u = current_user()
+
+    # Bildirim ekranı danışmanlar içindir
+    if u['role'] == 'admin':
+        return redirect(url_for('index'))
+
+    c = db()
+
+    rows = c.execute("""
+        SELECT n.*, p.transaction_type, p.property_type,
+               p.project_name, p.rooms, p.price
+        FROM notifications n
+        LEFT JOIN portfolios p ON p.id=n.portfolio_id
+        WHERE n.user_id=?
+        ORDER BY n.created_at DESC
+    """, (u['id'],)).fetchall()
+
+    # Ekran açıldığında bildirimleri okundu olarak işaretle
+    c.execute("""
+        UPDATE notifications
+        SET is_read=1
+        WHERE user_id=?
+        AND is_read=0
+    """, (u['id'],))
+
+    c.commit()
+    c.close()
+
+    return render_template(
+        'notifications.html',
+        u=u,
+        rows=rows
+    )
+
 @app.context_processor
 def helpers():
     def advisors():
