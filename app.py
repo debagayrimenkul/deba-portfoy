@@ -59,6 +59,16 @@ def init_db():
         updated_at TEXT NOT NULL,
         FOREIGN KEY(advisor_id) REFERENCES users(id)
     );
+        CREATE TABLE IF NOT EXISTS notifications(
+        id INTEGER PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        portfolio_id INTEGER,
+        message TEXT NOT NULL,
+        is_read INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES users(id),
+        FOREIGN KEY(portfolio_id) REFERENCES portfolios(id)
+    );
     ''')
 
     # Mevcut veritabanına yeni alanları güvenli şekilde ekle
@@ -637,6 +647,20 @@ def approve_portfolio(pid):
 
     now = datetime.now().strftime('%Y-%m-%d %H:%M')
 
+    # Önce onaylanacak portföyü ve danışmanını al
+    portfolio = c.execute("""
+        SELECT p.*, u.name AS advisor_name
+        FROM portfolios p
+        JOIN users u ON u.id = p.advisor_id
+        WHERE p.id=? AND p.status='pending'
+    """, (pid,)).fetchone()
+
+    if not portfolio:
+        c.close()
+        flash('Onaylanacak portföy bulunamadı.')
+        return redirect(url_for('pending_portfolios'))
+
+    # Portföyü aktif hale getir
     c.execute("""
         UPDATE portfolios
         SET status='active',
@@ -644,13 +668,56 @@ def approve_portfolio(pid):
         WHERE id=? AND status='pending'
     """, (now, pid))
 
+    # Bildirim mesajını oluştur
+    location = portfolio['project_name'] or portfolio['neighborhood'] or ''
+
+    message = (
+        f"{portfolio['advisor_name']} yeni bir "
+        f"{portfolio['transaction_type']} "
+        f"{portfolio['property_type']} portföy ekledi"
+    )
+
+    if portfolio['rooms']:
+        message += f" - {portfolio['rooms']}"
+
+    if location:
+        message += f" - {location}"
+
+    # Portföyü ekleyen danışman ve adminler hariç
+    # diğer aktif danışmanları bul
+    recipients = c.execute("""
+        SELECT id
+        FROM users
+        WHERE active=1
+          AND role!='admin'
+          AND id!=?
+    """, (portfolio['advisor_id'],)).fetchall()
+
+    # Her danışmana ayrı bildirim oluştur
+    for recipient in recipients:
+        c.execute("""
+            INSERT INTO notifications(
+                user_id,
+                portfolio_id,
+                message,
+                is_read,
+                created_at
+            )
+            VALUES(?,?,?,?,?)
+        """, (
+            recipient['id'],
+            pid,
+            message,
+            0,
+            now
+        ))
+
     c.commit()
     c.close()
 
-    flash('Portföy onaylandı ve yayına alındı.')
+    flash('Portföy onaylandı ve danışmanlara bildirim gönderildi.')
 
     return redirect(url_for('pending_portfolios'))
-
 
 @app.route('/admin/portfolio/<int:pid>/reject', methods=['POST'])
 @login_required
@@ -852,6 +919,7 @@ def helpers():
 
     pending_count = 0
     rejected_count = 0
+    notification_count = 0
 
     u = current_user()
 
@@ -878,14 +946,26 @@ def helpers():
 
             rejected_count = row['n']
 
+            row = c.execute(
+                """
+                SELECT COUNT(*) n
+                FROM notifications
+                WHERE user_id=?
+                AND is_read=0
+                """,
+                (u['id'],)
+            ).fetchone()
+
+            notification_count = row['n']
+
         c.close()
 
     return dict(
         advisors=advisors,
         pending_count=pending_count,
-        rejected_count=rejected_count
+        rejected_count=rejected_count,
+        notification_count=notification_count
     )
-
 
 if __name__ == '__main__':
     app.run(
