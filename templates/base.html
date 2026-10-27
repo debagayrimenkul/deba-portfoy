@@ -70,6 +70,11 @@
     Reddedilenler ({{ rejected_count }})
 </a>
 
+    <a href="{{ url_for('notifications') }}"
+   class="{% if request.endpoint == 'notifications' %}active-nav{% endif %}">
+    🔔 ({{ notification_count }})
+</a>
+
 {% endif %}
 <a href="{{ url_for('change_password') }}">
     Şifrem
