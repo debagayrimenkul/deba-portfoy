@@ -342,7 +342,46 @@ def save_portfolio(pid, tt, u):
     owner_phone = f.get('owner_phone', '').strip()
 
     c = db()
+    # YENİ PORTFÖYLERDE MÜKERRER KAYIT KONTROLÜ
+    if not pid and f.get('property_type') == 'Daire':
 
+        project_name = (f.get('project_name') or '').strip()
+        block = (f.get('block') or '').strip()
+        apartment_no = (f.get('apartment_no') or '').strip()
+
+        if project_name and block and apartment_no:
+
+            duplicate = c.execute('''
+                SELECT p.id, p.status, p.project_name, p.block,
+                       p.apartment_no, u.name AS advisor_name
+                FROM portfolios p
+                LEFT JOIN users u ON u.id = p.advisor_id
+                WHERE LOWER(TRIM(p.project_name)) = LOWER(TRIM(?))
+                  AND LOWER(TRIM(p.block)) = LOWER(TRIM(?))
+                  AND p.apartment_no = ?
+                LIMIT 1
+            ''', (
+                project_name,
+                block,
+                apartment_no
+            )).fetchone()
+
+            if duplicate:
+                c.close()
+
+                flash(
+                    'Bu portföy sistemde zaten kayıtlı. '
+                    + duplicate['project_name']
+                    + ' / '
+                    + (duplicate['block'] or '-')
+                    + ' Blok / Daire '
+                    + str(duplicate['apartment_no'])
+                    + ' / Danışman: '
+                    + (duplicate['advisor_name'] or '-'),
+                    'error'
+                )
+
+                return redirect(url_for('new_portfolio', tt=tt))
     if pid:
         
 
