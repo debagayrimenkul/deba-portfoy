@@ -26,12 +26,54 @@
         </select>
     </label>
 
-    <!-- PROJE -->
-    <label class="project-field">
-        <span id="project-label">Proje Adı</span>
-        <input name="project_name"
-               value="{{p.project_name if p else ''}}">
-    </label>
+   <!-- PROJE -->
+<label class="project-field">
+    <span id="project-label">Proje Adı</span>
+
+    <select name="project_name" id="project_name">
+        <option value="">Proje Seçiniz</option>
+
+        {% for x in [
+            'TUAL 1. PARSEL',
+            'TUAL 2. PARSEL',
+            'TUAL 3. PARSEL',
+            'TUAL 4. PARSEL',
+            'TUAL 5. PARSEL',
+            'TUAL 6. PARSEL',
+            'FLORA BAHÇEKENT',
+            'AVRUPARK BAHÇEKENT 650',
+            'AVRUPARK BAHÇEKENT 651',
+            'AVRUPARK HAYAT',
+            'SEMT1 BAHÇEKENT',
+            'SEMT2 BAHÇEKENT',
+            'SEMT3 BAHÇEKENT',
+            '656 EMLAK KONUT',
+            '654 EMLAK KONUT',
+            '653 EMLAK KONUT',
+            '652 EMLAK KONUT',
+            'TOKİ HOŞDERE',
+            'AKZİRVE 1',
+            'AKZİRVE 2',
+            'VADİ EVLERİ 1',
+            'VADİ EVLERİ 2',
+            'NEZİH PARK 1',
+            'CADDE FLORA',
+            'BANU EVLERİ BAHÇEKENT'
+        ] %}
+
+        <option value="{{x}}"
+            {% if p and p.project_name==x %}selected{% endif %}>
+            {{x}}
+        </option>
+
+        {% endfor %}
+
+        <option value="DİĞER"
+            {% if p and p.project_name=='DİĞER' %}selected{% endif %}>
+            DİĞER
+        </option>
+    </select>
+</label>
 
     <!-- BLOK - SADECE DAİRE -->
     <label class="apartment-field">
