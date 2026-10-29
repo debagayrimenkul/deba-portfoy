@@ -340,12 +340,16 @@ def save_portfolio(pid, tt, u):
     # Bu bilgilerin kimlere gösterileceğini ekran tarafında ayrıca kontrol ediyoruz.
     owner_name = f.get('owner_name', '').strip()
     owner_phone = f.get('owner_phone', '').strip()
+    # DİĞER seçildiyse manuel yazılan proje adını kullan
+    project_name = (f.get('project_name') or '').strip()
 
+    if project_name == 'DİĞER':
+        project_name = (f.get('other_project_name') or '').strip()
     c = db()
     # YENİ PORTFÖYLERDE MÜKERRER KAYIT KONTROLÜ
     if not pid and f.get('property_type') == 'Daire':
 
-        project_name = (f.get('project_name') or '').strip()
+
         block = (f.get('block') or '').strip()
         apartment_no = (f.get('apartment_no') or '').strip()
 
@@ -388,7 +392,7 @@ def save_portfolio(pid, tt, u):
         vals = [
             tt,
             f['property_type'],
-            f.get('project_name'),
+            project_name,
             f.get('block'),
             f.get('apartment_no') or None,
             f.get('rooms'),
@@ -442,7 +446,7 @@ def save_portfolio(pid, tt, u):
         vals = [
             tt,
             f['property_type'],
-            f.get('project_name'),
+            project_name,
             f.get('block'),
             f.get('apartment_no') or None,
             f.get('rooms'),
@@ -513,7 +517,7 @@ def save_portfolio(pid, tt, u):
             )
 
             location = (
-                f.get('project_name')
+                project_name
                 or f.get('neighborhood')
                 or ''
             )
