@@ -73,6 +73,11 @@
             DİĞER
         </option>
     </select>
+            <input type="text"
+               id="other_project_name"
+               name="other_project_name"
+               placeholder="Proje adını yazınız"
+               style="display:none; margin-top:8px;">
 </label>
 
     <!-- BLOK - SADECE DAİRE -->
@@ -360,7 +365,23 @@ function updateForm() {
 
     }
 }
+// DİĞER seçilirse manuel proje adı alanını aç
+const projectSelect = document.getElementById('project_name');
+const otherProjectInput = document.getElementById('other_project_name');
 
+function updateOtherProject() {
+    if (projectSelect.value === 'DİĞER') {
+        otherProjectInput.style.display = '';
+        otherProjectInput.required = true;
+    } else {
+        otherProjectInput.style.display = 'none';
+        otherProjectInput.required = false;
+        otherProjectInput.value = '';
+    }
+}
+
+projectSelect.addEventListener('change', updateOtherProject);
+updateOtherProject();
 document.getElementById('ptype').addEventListener('change', updateForm);
 updateForm();
 </script>
