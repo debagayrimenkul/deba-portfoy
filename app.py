@@ -307,7 +307,7 @@ def portfolios(tt):
     advisors = c.execute("""
         SELECT id, name
         FROM users
-        WHERE active=TRUE
+        WHERE active=1
         ORDER BY name
     """).fetchall()
     c.close()
