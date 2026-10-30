@@ -232,7 +232,12 @@ def portfolios(tt):
         if v:
             q += f" AND p.{f}=?"
             args.append(v)
+    # Danışman filtresi
+    advisor_id = request.args.get('advisor_id', '').strip()
 
+    if advisor_id:
+        q += " AND p.advisor_id=?"
+        args.append(int(advisor_id))
     # Konum filtreleri
     province = request.args.get('province', '').strip()
     district = request.args.get('district', '').strip()
@@ -298,16 +303,23 @@ def portfolios(tt):
             ORDER BY project_name
         """)
     ]
-
+    # Aktif danışman listesi
+    advisors = c.execute("""
+        SELECT id, name
+        FROM users
+        WHERE active=TRUE
+        ORDER BY name
+    """).fetchall()
     c.close()
 
     return render_template(
-        'portfolios.html',
-        u=u,
-        rows=rows,
-        tt=tt,
-        projects=projects
-    )
+    'portfolios.html',
+    u=u,
+    rows=rows,
+    tt=tt,
+    projects=projects,
+    advisors=advisors
+)
 @app.route('/portfolio/new/<tt>', methods=['GET', 'POST'])
 @login_required
 def new_portfolio(tt):
