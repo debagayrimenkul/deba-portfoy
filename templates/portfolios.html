@@ -38,7 +38,16 @@
         </option>
         {% endfor %}
     </select>
+<select name="advisor_id">
+    <option value="">Tüm Danışmanlar</option>
 
+    {% for advisor in advisors %}
+    <option value="{{advisor.id}}"
+        {% if request.args.get('advisor_id') == advisor.id|string %}selected{% endif %}>
+        {{advisor.name}}
+    </option>
+    {% endfor %}
+</select>
     <select name="rooms">
         <option value="">Tüm Odalar</option>
         {% for x in ['1+0','1+1','1,5+1','2+1','2,5+1','3+1','4+1','5+1','5+2','6+1','6+2'] %}
