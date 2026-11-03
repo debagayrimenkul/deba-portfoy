@@ -665,6 +665,57 @@ def archive(pid):
         )
     )
 
+# SADECE ADMIN - PORTFOYU KALICI SIL
+@app.route('/admin/portfolio/<int:pid>/delete', methods=['POST'])
+@login_required
+def delete_portfolio(pid):
+
+    u = current_user()
+
+    # Sadece admin silebilir
+    if not u or u['role'] != 'admin':
+        flash('Bu işlem için yetkiniz yok.')
+        return redirect(url_for('index'))
+
+    c = db()
+
+    try:
+        p = c.execute(
+            'SELECT id, transaction_type FROM portfolios WHERE id=?',
+            (pid,)
+        ).fetchone()
+
+        if not p:
+            flash('Portföy bulunamadı.')
+            return redirect(url_for('archive_list'))
+
+        # Portföye bağlı bildirimleri sil
+        c.execute(
+            'DELETE FROM notifications WHERE portfolio_id=?',
+            (pid,)
+        )
+
+        # Portföyü kalıcı sil
+        c.execute(
+            'DELETE FROM portfolios WHERE id=?',
+            (pid,)
+        )
+
+        c.commit()
+
+        flash('Portföy kalıcı olarak silindi.')
+
+        return redirect(url_for('archive_list'))
+
+    except Exception:
+        c.rollback()
+        app.logger.exception('Portföy silme hatası')
+        flash('Portföy silinirken hata oluştu.')
+        return redirect(url_for('archive_list'))
+
+    finally:
+        c.close()
+
 
 @app.route('/archive')
 @login_required
