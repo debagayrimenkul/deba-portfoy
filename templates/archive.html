@@ -81,6 +81,19 @@
     </button>
 
 </form>
+<form action="{{ url_for('delete_portfolio', pid=p.id) }}"
+      method="POST"
+      style="margin-top:10px;"
+      onsubmit="return confirm('DİKKAT! Bu portföy kalıcı olarak silinecek. Bu işlem geri alınamaz. Silmek istediğinize emin misiniz?');">
+
+    <button type="submit"
+            class="button"
+            style="width:100%; background:#a32020; color:white;">
+        Kalıcı Sil
+    </button>
+
+</form>
+    
 {% endif %}
 </article>
 
