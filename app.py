@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import psycopg
+from pywebpush import webpush, WebPushException
+import json
 from functools import wraps
 from datetime import datetime, timedelta
 
@@ -40,7 +42,69 @@ class DatabaseConnection:
 
 def db():
     return DatabaseConnection()
+# TELEFONLARA PUSH BILDIRIM GONDER
+def send_push_notification(user_id, title, message, url='/'):
+    public_key = os.environ.get('VAPID_PUBLIC_KEY')
+    private_key = os.environ.get('VAPID_PRIVATE_KEY')
+    vapid_subject = os.environ.get('VAPID_SUBJECT', 'mailto:admin@example.com')
 
+    if not public_key or not private_key:
+        app.logger.warning('VAPID anahtarlari eksik.')
+        return
+
+    c = db()
+
+    try:
+        subscriptions = c.execute("""
+            SELECT id, endpoint, p256dh, auth
+            FROM push_subscriptions
+            WHERE user_id=?
+        """, (user_id,)).fetchall()
+
+        payload = json.dumps({
+            'title': title,
+            'body': message,
+            'url': url
+        }, ensure_ascii=False)
+
+        for sub in subscriptions:
+            try:
+                webpush(
+                    subscription_info={
+                        'endpoint': sub['endpoint'],
+                        'keys': {
+                            'p256dh': sub['p256dh'],
+                            'auth': sub['auth']
+                        }
+                    },
+                    data=payload,
+                    vapid_private_key=private_key,
+                    vapid_claims={
+                        'sub': vapid_subject
+                    },
+                    ttl=3600
+                )
+
+            except WebPushException as e:
+                app.logger.warning(
+                    'Push gonderilemedi: %s', str(e)
+                )
+
+                # Suresi dolmus abonelikleri temizle
+                if e.response is not None and e.response.status_code in (404, 410):
+                    c.execute(
+                        'DELETE FROM push_subscriptions WHERE id=?',
+                        (sub['id'],)
+                    )
+
+        c.commit()
+
+    except Exception:
+        c.rollback()
+        app.logger.exception('Push bildirim hatasi')
+
+    finally:
+        c.close()
 
 def init_db():
     c = db()
