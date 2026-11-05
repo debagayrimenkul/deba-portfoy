@@ -45,7 +45,7 @@ def db():
 # TELEFONLARA PUSH BILDIRIM GONDER
 def send_push_notification(user_id, title, message, url='/'):
     public_key = os.environ.get('VAPID_PUBLIC_KEY')
-    private_key = os.environ.get('VAPID_PRIVATE_KEY')
+    private_key = os.environ.get('VAPID_PRIVATE_KEY', '').strip().replace('\\n', '\n')
     vapid_subject = os.environ.get('VAPID_SUBJECT', 'mailto:admin@example.com')
 
     if not public_key or not private_key:
