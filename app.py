@@ -248,6 +248,22 @@ def push_subscribe():
 
     finally:
         c.close()
+        # TELEFON BILDIRIMLERI - VAPID ACIK ANAHTARI
+@app.route('/push/public-key')
+@login_required
+def push_public_key():
+    from flask import jsonify
+
+    public_key = os.environ.get('VAPID_PUBLIC_KEY', '')
+
+    if not public_key:
+        return jsonify({
+            'error': 'Bildirim anahtari tanimlanmamis'
+        }), 503
+
+    return jsonify({
+        'publicKey': public_key
+    })
 @app.route('/')
 @login_required
 def index():
