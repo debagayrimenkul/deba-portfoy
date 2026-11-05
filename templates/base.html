@@ -103,6 +103,15 @@
     {% endblock %}
 
 </main>
-
+{% if u %}
+<div style="text-align:center; padding:12px;">
+    <button type="button"
+            id="enable-push"
+            style="background:#800020; color:white; padding:10px 18px; border:0; border-radius:8px; cursor:pointer;">
+        🔔 Telefon Bildirimlerini Aç
+    </button>
+    <p id="push-status" style="font-size:13px;"></p>
+</div>
+{% endif %}
 </body>
 </html>
