@@ -199,7 +199,55 @@ def logout():
 @app.route('/service-worker.js')
 def service_worker():
     return app.send_static_file('service-worker.js')
+# TELEFON BILDIRIM ABONELIGINI KAYDET
+@app.route('/push/subscribe', methods=['POST'])
+@login_required
+def push_subscribe():
+    from flask import request, jsonify
+    import json
 
+    u = current_user()
+    data = request.get_json(silent=True) or {}
+
+    endpoint = data.get('endpoint')
+    keys = data.get('keys') or {}
+
+    p256dh = keys.get('p256dh')
+    auth = keys.get('auth')
+
+    if not endpoint or not p256dh or not auth:
+        return jsonify({'error': 'Eksik abonelik bilgisi'}), 400
+
+    c = db()
+
+    try:
+        c.execute("""
+            INSERT INTO push_subscriptions
+                (user_id, endpoint, p256dh, auth, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT (endpoint)
+            DO UPDATE SET
+                user_id = EXCLUDED.user_id,
+                p256dh = EXCLUDED.p256dh,
+                auth = EXCLUDED.auth
+        """, (
+            u['id'],
+            endpoint,
+            p256dh,
+            auth,
+            datetime.now().isoformat()
+        ))
+
+        c.commit()
+        return jsonify({'success': True})
+
+    except Exception:
+        c.rollback()
+        app.logger.exception('Push abonelik kayit hatasi')
+        return jsonify({'error': 'Kayit basarisiz'}), 500
+
+    finally:
+        c.close()
 @app.route('/')
 @login_required
 def index():
