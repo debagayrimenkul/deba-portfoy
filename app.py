@@ -715,8 +715,31 @@ def save_portfolio(pid, tt, u):
                     0,
                     now
                 ))
-    c.commit()
+      c.commit()
     c.close()
+
+    # Danışman yeni portföy eklediğinde adminlere telefon bildirimi gönder
+    if not pid and u['role'] != 'admin':
+
+        admin_db = db()
+
+        try:
+            admins = admin_db.execute("""
+                SELECT id
+                FROM users
+                WHERE role='admin' AND active=1
+            """).fetchall()
+
+        finally:
+            admin_db.close()
+
+        for admin in admins:
+            send_push_notification(
+                admin['id'],
+                'DEBA PORTFÖY - Yeni Onay',
+                f"{u['name']} yeni bir {tt} portföy ekledi. Onayınızı bekliyor.",
+url_for('pending_portfolios')
+            )
 
     return redirect(url_for('portfolios', tt=tt))
 
