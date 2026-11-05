@@ -183,6 +183,10 @@ def logout():
     return redirect(url_for('login'))
 
 
+@app.route('/service-worker.js')
+def service_worker():
+    return app.send_static_file('service-worker.js')
+
 @app.route('/')
 @login_required
 def index():
