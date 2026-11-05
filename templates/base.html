@@ -113,5 +113,90 @@
     <p id="push-status" style="font-size:13px;"></p>
 </div>
 {% endif %}
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const button = document.getElementById('enable-push');
+    const status = document.getElementById('push-status');
+
+    if (!button) return;
+
+    button.addEventListener('click', async function () {
+        try {
+            if (!('serviceWorker' in navigator) ||
+                !('PushManager' in window) ||
+                !('Notification' in window)) {
+                status.textContent = 'Bu cihaz bildirimleri desteklemiyor.';
+                return;
+            }
+
+            button.disabled = true;
+            status.textContent = 'Bildirim izni kontrol ediliyor...';
+
+            const permission = await Notification.requestPermission();
+
+            if (permission !== 'granted') {
+                status.textContent = 'Bildirim izni verilmedi.';
+                return;
+            }
+
+            const registration = await navigator.serviceWorker.register(
+                '/service-worker.js'
+            );
+
+            const ready = await navigator.serviceWorker.ready;
+
+            const keyResponse = await fetch('/push/public-key');
+
+            if (!keyResponse.ok) {
+                throw new Error('Bildirim anahtarı alınamadı.');
+            }
+
+            const keyData = await keyResponse.json();
+
+            const key = keyData.publicKey;
+
+            const padding = '='.repeat((4 - key.length % 4) % 4);
+            const base64 = (key + padding)
+                .replace(/-/g, '+')
+                .replace(/_/g, '/');
+
+            const raw = atob(base64);
+            const applicationServerKey = Uint8Array.from(
+                raw, c => c.charCodeAt(0)
+            );
+
+            let subscription = await ready.pushManager.getSubscription();
+
+            if (!subscription) {
+                subscription = await ready.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: applicationServerKey
+                });
+            }
+
+            const response = await fetch('/push/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(subscription.toJSON())
+            });
+
+            if (!response.ok) {
+                throw new Error('Abonelik kaydedilemedi.');
+            }
+
+            status.textContent = 'Telefon bildirimleri etkinleştirildi.';
+            button.textContent = '🔔 Bildirimler Açık';
+
+        } catch (error) {
+            console.error(error);
+            status.textContent = 'Bildirim kurulamadı: ' + error.message;
+        } finally {
+            button.disabled = false;
+        }
+    });
+});
+</script>
 </body>
 </html>
