@@ -1,0 +1,19 @@
+
+{
+  "name": "DEBA PORTFÖY",
+  "short_name": "DEBA",
+  "description": "DEBA Gayrimenkul Portföy Yönetimi",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#800020",
+  "icons": [
+    {
+      "src": "/static/Bordo%20Zeminli%20Modern%20Gayrimenkul%20Logosu.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
