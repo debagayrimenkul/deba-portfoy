@@ -715,7 +715,7 @@ def save_portfolio(pid, tt, u):
                     0,
                     now
                 ))
-      c.commit()
+    c.commit()
     c.close()
 
     # Danışman yeni portföy eklediğinde adminlere telefon bildirimi gönder
