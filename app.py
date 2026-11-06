@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import psycopg
 from pywebpush import webpush, WebPushException
+from py_vapid import Vapid
 import json
 from functools import wraps
 from datetime import datetime, timedelta
@@ -78,7 +79,7 @@ def send_push_notification(user_id, title, message, url='/'):
                         }
                     },
                     data=payload,
-                    vapid_private_key=private_key,
+vapid_private_key=Vapid.from_pem(private_key.encode()),
                     vapid_claims={
                         'sub': vapid_subject
                     },
