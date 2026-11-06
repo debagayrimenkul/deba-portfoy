@@ -1062,9 +1062,9 @@ def approve_portfolio(pid):
     if location:
         message += f" - {location}"
 
- # Portföyü ekleyen dahil tüm aktif danışmanları bul
- # Adminlere bu aşamada bildirim gönderme
-      recipients = c.execute("""
+    # Portföyü ekleyen dahil tüm aktif danışmanları bul
+    # Adminlere bu aşamada bildirim gönderme
+    recipients = c.execute("""
         SELECT id
         FROM users
         WHERE active=1
