@@ -83,7 +83,13 @@ vapid_private_key=Vapid.from_pem(private_key.encode()),
                     vapid_claims={
                         'sub': vapid_subject
                     },
-                    ttl=3600
+                         ttl=3600
+                )
+
+                app.logger.warning(
+                    'PUSH BASARILI - Kullanici: %s, Abonelik: %s',
+                    user_id,
+                    sub['id']
                 )
 
             except WebPushException as e:
