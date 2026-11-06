@@ -1062,15 +1062,14 @@ def approve_portfolio(pid):
     if location:
         message += f" - {location}"
 
-    # Portföyü ekleyen danışman ve adminler hariç
-    # diğer aktif danışmanları bul
-    recipients = c.execute("""
+ # Portföyü ekleyen dahil tüm aktif danışmanları bul
+ # Adminlere bu aşamada bildirim gönderme
+      recipients = c.execute("""
         SELECT id
         FROM users
         WHERE active=1
           AND role!='admin'
-          AND id!=?
-    """, (portfolio['advisor_id'],)).fetchall()
+    """).fetchall()
 
     # Her danışmana ayrı bildirim oluştur
     for recipient in recipients:
@@ -1093,7 +1092,14 @@ def approve_portfolio(pid):
 
     c.commit()
     c.close()
-
+    # Onaylanan portföyü diğer danışmanların telefonlarına bildir
+    for recipient in recipients:
+        send_push_notification(
+            recipient['id'],
+            'DEBA PORTFÖY - Yeni Onaylanan Portföy',
+            message,
+            url_for('portfolios', tt=portfolio['transaction_type'])
+        )
     flash('Portföy onaylandı ve danışmanlara bildirim gönderildi.')
 
     return redirect(url_for('pending_portfolios'))
