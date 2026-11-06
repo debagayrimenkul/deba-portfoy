@@ -725,6 +725,16 @@ def save_portfolio(pid, tt, u):
     c.commit()
     c.close()
 
+        # Admin yeni portföy eklediğinde danışmanlara telefon bildirimi gönder
+    if not pid and u['role'] == 'admin':
+
+        for recipient in recipients:
+            send_push_notification(
+                recipient['id'],
+                'DEBA PORTFÖY - Yeni Portföy',
+                message,
+                url_for('portfolios', tt=tt)
+            )
     # Danışman yeni portföy eklediğinde adminlere telefon bildirimi gönder
     if not pid and u['role'] != 'admin':
 
